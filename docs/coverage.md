@@ -20,7 +20,7 @@ How to read the tables:
 - **Shape**: the documented code, as a developer writes it.
 - **Reaches**: the member Drupal calls or reads, and how.
 - **Covered by**: a class of this package, a shipmonk built-in, or the
-  [library-code rule](../README.md#what-counts-as-used) when the member
+  [library-code rule](../README.md#library-code) when the member
   overrides a declaration in core or contrib. *Not reported* means shipmonk
   never reports that kind of member, so there is nothing to cover.
 - **Tests**: the directory under `tests/` with the fixtures.

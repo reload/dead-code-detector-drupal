@@ -24,7 +24,7 @@ DCD does the analysis.
   Drupal site.
 - The library-code provider generalises DCD's `VendorUsageProvider` from the
   vendor directory to every Composer install path. See the
-  [README](../README.md#what-counts-as-used).
+  [README](../README.md#library-code).
 - Code copied from it is credited to it.
 
 **Upstream:** DCD's README admits built-in support for frameworks. These are
