@@ -1,5 +1,7 @@
-# No settings from this checkout.
+# No library paths or settings from this checkout's Composer data.
 services:
+    drupalDeadCode.libraryPaths:
+        factory: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths::fromDirectories([])
     drupalDeadCode.settingsFiles:
         factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles([])
 

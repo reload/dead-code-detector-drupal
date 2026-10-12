@@ -1,0 +1,3 @@
+services:
+    drupalDeadCode.libraryPaths:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\Support\LibraryCode\FixtureLibraryPaths::create()

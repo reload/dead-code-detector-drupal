@@ -32,3 +32,15 @@ services:
             settingsFiles: @drupalDeadCode.settingsFiles
         tags:
             - phpstan.resultCacheMetaExtension
+
+    drupalDeadCode.libraryPaths:
+        type: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths
+        factory: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths::read()
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryCodeUsageProvider
+        arguments:
+            libraryPaths: @drupalDeadCode.libraryPaths
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
