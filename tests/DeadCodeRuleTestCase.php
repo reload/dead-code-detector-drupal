@@ -29,7 +29,7 @@ use function str_starts_with;
 use function substr;
 
 /**
- * Runs shipmonk's DeadCodeRule as configured by its rules.neon and this
+ * Runs dead-code-detector's DeadCodeRule as configured by its rules.neon and this
  * package's extension.neon over fixtures, and checks one fixture member per
  * test.
  *

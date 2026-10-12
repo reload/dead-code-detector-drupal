@@ -32,7 +32,7 @@ use function sprintf;
  * Members of Composer-installed code, and members overriding or implementing
  * them, are used by that code, so analysed library code is never reported.
  *
- * Generalises shipmonk's VendorUsageProvider, which only knows the vendor
+ * Generalises dead-code-detector's VendorUsageProvider, which only knows the vendor
  * directory, to every Composer install path: Drupal core and contrib live
  * outside vendor/.
  *
@@ -121,7 +121,7 @@ final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
             $member instanceof ReflectionProperty => $ancestor->hasProperty($member->getName()),
         };
 
-        // Built-in classes have PHPStan stubs; shipmonk's BuiltinUsageProvider covers them.
+        // Built-in classes have PHPStan stubs; dead-code-detector's BuiltinUsageProvider covers them.
         if (!$hasMember || $ancestor->getExtensionName() !== false) {
             return null;
         }

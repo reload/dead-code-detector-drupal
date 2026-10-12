@@ -36,12 +36,12 @@ Verify every URL before writing it down, with a request, not from memory.
 - `extension.neon`: service wiring. Users load it through
   phpstan/extension-installer. Its two parameters are the whole
   configuration; see the design for why there is no more.
-- `tests/<Bucket>/<Mechanism>/`, mirroring `src/`: unit tests for decisions,
-  and rule tests that run shipmonk's `DeadCodeRule` from the PHPStan container
-  over fixtures in `data/`. Rule tests with the package's default parameters
-  share one container, `tests/fixtures.neon`, and one analysis; their fixtures
-  live in `Drupal\example\<Mechanism>`, so each test sees only its own. A
-  test needing other parameters names its own neon, with paths from
+- `tests/<Bucket>/<Mechanism>/`, mirroring `src/`: unit tests for decisions, and
+  rule tests that run dead-code-detector's `DeadCodeRule` from the PHPStan
+  container over fixtures in `data/`. Rule tests with the package's default
+  parameters share one container, `tests/fixtures.neon`, and one analysis; their
+  fixtures live in `Drupal\example\<Mechanism>`, so each test sees only its own.
+  A test needing other parameters names its own neon, with paths from
   `%rootDir%`, PHPStan's directory.
 
 ## Conventions
@@ -53,7 +53,7 @@ Verify every URL before writing it down, with a request, not from memory.
   world, and unit tests must not need the filesystem.
 - `tests/Architecture` holds the phpat rules PHPStan runs: `Support` depends
   on no Drupal area, `Contrib` builds on `Support` alone, and readers are
-  built by the container only. shipmonk's rules name providers
+  built by the container only. dead-code-detector's rules name providers
   `*UsageProvider` and excluders `*Excluder`.
 - Name fixture classes and members after the case they prove.
 - Commit messages follow Conventional Commits: the release workflow reads
@@ -61,7 +61,7 @@ Verify every URL before writing it down, with a request, not from memory.
   subject must say what changed for users. `make lint-commits` checks them
   against `origin/main`, as CI does on pull requests.
 - phpstan-drupal is a dependency for how it analyses Drupal code; do not
-  build on its static maps. Use shipmonk only through its documented
+  build on its static maps. Use dead-code-detector only through its documented
   extension points.
 
 ## Cross-cutting
@@ -79,9 +79,9 @@ Verify every URL before writing it down, with a request, not from memory.
   `ExtensionMap` ignores the analysed and excluded paths. Both are static
   state filled at bootstrap and due to change. Not building on them also
   keeps an upstream move possible.
-- **Calls by name.** Each mechanism that calls members by name on subtypes
-  has a provider of its own, as each framework does in shipmonk, so it can be
-  as precise as the mechanism allows. They come from concrete findings: REST
+- **Calls by name.** Each mechanism that calls members by name on subtypes has a
+  provider of its own, as each framework does in dead-code-detector, so it can
+  be as precise as the mechanism allows. They come from concrete findings: REST
   resources' HTTP methods and GraphQL data producers' `resolve()` on dpl-web;
   access checkers' `access()`, config entity properties, plugin attribute
   properties and constraint properties on Canvas; JSON:API resources'

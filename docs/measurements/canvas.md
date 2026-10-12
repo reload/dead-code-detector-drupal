@@ -7,8 +7,8 @@ serve as labels.
 
 **Result**:
 
-- **Recall is 100%.** Of the dead members Canvas removed and shipmonk reports,
-  the package still reports all 24.
+- **Recall is 100%.** Of the dead members Canvas removed and dead-code-detector
+  reports, the package still reports all 24.
 - **Most of Canvas's own providers become unnecessary.** Of the 390 findings
   Canvas declared alive, the package explains all but 29.
 - **The 29 that remain:** 26 come from Canvas-specific blanket rules (its API
@@ -45,7 +45,7 @@ serve as labels.
 
 ## Runs
 
-| | shipmonk alone | With this package |
+| | dead-code-detector alone | With this package |
 |---|---|---|
 | All findings | 468 | 61 |
 | Removed by Canvas (real dead code) | 24 | 24 |
@@ -53,13 +53,13 @@ serve as labels.
 | Alive according to Canvas | 390 | 29 |
 | In `canvas_ai` and `canvas_personalization` (not scored) | 49 | 4 |
 
-shipmonk alone reproduces Canvas's own zero-config run: 468 findings against
-Canvas's recorded 467, with never-read and never-written properties and
+dead-code-detector alone reproduces Canvas's own zero-config run: 468 findings
+against Canvas's recorded 467, with never-read and never-written properties and
 constants matching exactly. That confirms the setup.
 
-The 4 removed declarations that shipmonk does not report are dead because of
-other removals, for example the constructor of a class whose only purpose was
-injecting a dead property.
+The 4 removed declarations that dead-code-detector does not report are dead
+because of other removals, for example the constructor of a class whose only
+purpose was injecting a dead property.
 
 The ignore the package makes unnecessary is `Page::getRequestTime()`, a
 base-field default value callback built as `static::class .
@@ -77,7 +77,7 @@ exposed them:
 | Plugin attribute properties, read by `AttributeBase::get()` | ~8 | Plugin attribute property provider |
 | Config schema `Callback` constraints | 3 | New `*.schema.yml` reader |
 | Access checker registered in PHP by `CanvasServiceProvider` | 1 | Access checker provider: `access()` |
-| PHPUnit test methods and data providers | ~770 | None in the package. The benchmark site lacked `phpunit/phpunit`, and shipmonk's PHPUnit provider only switches on when it is installed. |
+| PHPUnit test methods and data providers | ~770 | None in the package. The benchmark site lacked `phpunit/phpunit`, and dead-code-detector's PHPUnit provider only switches on when it is installed. |
 
 Switching Twig matching off changes no finding. Canvas's 114 templates
 access 14 distinct names, mostly component props such as `src` and `alt`.
@@ -102,9 +102,9 @@ access 14 distinct names, mostly component props such as `src` and `alt`.
     Canvas's blanket rule over constraint properties kept it.
   - `AutoSaveConflictConfigTestBase::$updateKey` and
     `PropSourceMatcherTestBase::$testedPropSourceMatcherClass` are never
-    written. Subclasses redeclare them with defaults, and shipmonk does not
-    count a redeclaration as a write to the parent's property. That is a
-    shipmonk limitation.
+    written. Subclasses redeclare them with defaults, and dead-code-detector
+    does not count a redeclaration as a write to the parent's property. That is
+    a dead-code-detector limitation.
 
 ## Precision against Canvas's decisions
 

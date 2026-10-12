@@ -16,8 +16,8 @@ properties do not:
 - constants: no findings left
 
 The run found 45 dead members. 7 of the 13 false positives come from one
-shipmonk limitation: a trait property that another declaration of the same
-property shadows. The other 6 have callers in graphql-php and Symfony's
+dead-code-detector limitation: a trait property that another declaration of the
+same property shadows. The other 6 have callers in graphql-php and Symfony's
 serializer. Each can be identified statically, so the run gives no reason to
 build the Drush runtime dump.
 
@@ -43,9 +43,9 @@ A dpl-web maintainer then reviewed every finding: see the
   - Paths: `web/modules/custom`, `web/profiles/dpl_cms` and
     `web/themes/custom`, tests included.
   - All member kinds on, and this package's defaults otherwise.
-- **Baseline**: shipmonk without this package, with shipmonk's own tests
-  excluder pointed at `web/modules/custom/*/tests` and
-  `web/modules/custom/*/*/tests`.
+- **Baseline**: dead-code-detector without this package, with
+  dead-code-detector's own tests excluder pointed at
+  `web/modules/custom/*/tests` and `web/modules/custom/*/*/tests`.
 - **Generated code**: the GraphQL clients in `src/GraphQL/{Operations,Types}`
   and the `src/ProxyClass` proxies. It is analysed, so its calls count, but
   its findings are counted separately: 771 in every run.
@@ -56,7 +56,7 @@ Findings in hand-written code, as providers were added:
 
 | Run | Providers | Findings | Removed |
 |---|---|---|---|
-| 0 | shipmonk alone | 314 | |
+| 0 | dead-code-detector alone | 314 | |
 | 1 | + library code | 269 | 45 |
 | 2 | + `services.yml`, `routing.yml` | 147 | 122 |
 | 3 | + `#[Hook]`, Drush, string callables, conventions, service tags, Twig, tests excluder | 69 | 78 |
@@ -94,7 +94,7 @@ Every removal was checked to be a caller Drupal really makes:
   `autowire_plugin_trait` marked as written on the assumption that the module
   writes them by reflection. It does not: its `create()` passes services to
   the constructor by parameter name. Run 7 removed that provider, and the six
-  are [false positives](#false-positives) of a shipmonk limitation.
+  are [false positives](#false-positives) of a dead-code-detector limitation.
 - **Run 6** (8): `BlockedReason`'s constants, which `MyCLabs\Enum\Enum` reads
   through `__callStatic()` and `from()`. Since 2026-10-04, a usage provider
   in dpl-web's own PHPStan config covers them, because the package covers
@@ -125,9 +125,9 @@ None of the 13 is a Drupal mechanism that a provider is missing.
 
 | Cause | Findings | Remedy |
 |---|---|---|
-| A trait property that another declaration of the same property shadows: in a trait composing it, in the class using it, or in that class's parent. PHP merges the declarations into one property; shipmonk keeps them apart and attributes reads and writes to one of them. `FileTrait`'s `$entityTypeManager`, `$fileSystem` and `$fileRepository`, and `$entityTypeManager` in `ImageTrait`, `SoundTrait` and `EmbedVideoTrait` | 1 never read, 6 never written | Drop the redundant declarations; otherwise a shipmonk limitation |
+| A trait property that another declaration of the same property shadows: in a trait composing it, in the class using it, or in that class's parent. PHP merges the declarations into one property; dead-code-detector keeps them apart and attributes reads and writes to one of them. `FileTrait`'s `$entityTypeManager`, `$fileSystem` and `$fileRepository`, and `$entityTypeManager` in `ImageTrait`, `SoundTrait` and `EmbedVideoTrait` | 1 never read, 6 never written | Drop the redundant declarations; otherwise a dead-code-detector limitation |
 | graphql-php's default field resolver reads response objects' properties by field name (`ImportResponse`, `NewContentResponse`) | 3 never read | `@api` on the classes |
-| Symfony's serializer constructs `dpl_campaign`'s `Facet`, `FacetValue` and `Query` | 3 methods | Upstream in shipmonk's Symfony support; `@api` meanwhile |
+| Symfony's serializer constructs `dpl_campaign`'s `Facet`, `FacetValue` and `Query` | 3 methods | Upstream in dead-code-detector's Symfony support; `@api` meanwhile |
 
 ### Real dead code
 
@@ -198,12 +198,13 @@ templates, YAML or tests, and does not override anything Composer installed.
      limitation above.
    - constants: no findings left
 
-   Constants were at 0% until `constantsReadByConvention` handled
-   `MyCLabs\Enum\Enum`. Switching off a weak kind would not have worked: this
-   package cannot change shipmonk's defaults, because extension-installer loads
-   shipmonk's `rules.neon` after this package's `extension.neon`.
+Constants were at 0% until `constantsReadByConvention` handled
+`MyCLabs\Enum\Enum`. Switching off a weak kind would not have worked: this
+package cannot change dead-code-detector's defaults, because extension-installer
+loads dead-code-detector's `rules.neon` after this package's `extension.neon`.
 2. **Every false positive explained**: met. All 13 have a named cause, a
-   shipmonk limitation or a library mechanism. None is runtime-only wiring.
+   dead-code-detector limitation or a library mechanism. None is runtime-only
+   wiring.
 3. **Meaningful real dead code**: met. There are 45 dead members in 47
    findings: 18 unused injected services, a 16-method unused interface
    contract, and 11 other members.
@@ -232,8 +233,8 @@ this review. They are the redeclaration it found for
 What this adds to the estimate:
 
 - **Every false positive is outside Drupal's wiring.** They come from
-  graphql-php, Symfony's serializer and a shipmonk trait limitation. No
-  finding was code that Drupal calls through a mechanism this package misses.
+  graphql-php, Symfony's serializer and a dead-code-detector trait limitation.
+  No finding was code that Drupal calls through a mechanism this package misses.
 - **26 findings lead to a code change**: 23 removals and 3 other fixes. Two
   of the linked ones resolve each other: making `GeneralSettingsForm` call
   `enableSmsNotifications()` uses its unused `$reservationSettings`.

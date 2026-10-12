@@ -1,28 +1,28 @@
 # Writing a usage provider
 
-When Drupal, a contrib module or a library calls code in a way this package
-does not know, the detector reports that code as dead. A usage provider
-closes the gap: a small PHP class, registered in your PHPStan configuration,
-that tells shipmonk which members are used and why. This page shows the
-shapes a provider takes, how to register and check one, and when the
-mechanism belongs in this package instead.
+When Drupal, a contrib module or a library calls code in a way this package does
+not know, the detector reports that code as dead. A usage provider closes the
+gap: a small PHP class, registered in your PHPStan configuration, that tells
+dead-code-detector which members are used and why. This page shows the shapes a
+provider takes, how to register and check one, and when the mechanism belongs in
+this package instead.
 
-## How shipmonk asks
+## How dead-code-detector asks
 
-shipmonk collects usages while PHPStan analyses each file. A provider is a
-service tagged `shipmonk.deadCode.memberUsageProvider` that implements
-`ShipMonk\PHPStan\DeadCode\Provider\MemberUsageProvider`. For every AST node
-it may return usages, each naming a member and an origin. A usage whose
-origin is a real call site is transitively dead when that code is; a virtual
-usage, carrying a note that says why, keeps the member alive on its own.
+dead-code-detector collects usages while PHPStan analyses each file. A provider
+is a service tagged `shipmonk.deadCode.memberUsageProvider` that implements
+`ShipMonk\PHPStan\DeadCode\Provider\MemberUsageProvider`. For every AST node it
+may return usages, each naming a member and an origin. A usage whose origin is a
+real call site is transitively dead when that code is; a virtual usage, carrying
+a note that says why, keeps the member alive on its own.
 
-Most providers need no AST. shipmonk's
+Most providers need no AST. dead-code-detector's
 `ReflectionBasedMemberUsageProvider` asks one question per member of every
 analysed class, through `shouldMarkMethodAsUsed()`,
 `shouldMarkConstantAsUsed()`, `shouldMarkPropertyAsRead()` and
-`shouldMarkPropertyAsWritten()`. Answer with `VirtualUsageData::withNote()`
-or null. The note appears in shipmonk's debug output, so write the reason a
-reader would want: who calls the member, and how.
+`shouldMarkPropertyAsWritten()`. Answer with `VirtualUsageData::withNote()` or
+null. The note appears in dead-code-detector's debug output, so write the reason
+a reader would want: who calls the member, and how.
 
 ## Three shapes
 
@@ -104,11 +104,11 @@ The package is not at 1.0 yet, so pin the version you build on.
 
 ### A caller visible in PHP code
 
-When the call is in PHP but shipmonk cannot follow it, implement
+When the call is in PHP but dead-code-detector cannot follow it, implement
 `MemberUsageProvider` directly and read the AST. Type the receiver with the
 scope, emit a `ClassMethodUsage` whose origin is
 `UsageOrigin::createRegular($node, $scope)`, and the usage stays
-transitively dead when its caller is. shipmonk's README shows this for
+transitively dead when its caller is. dead-code-detector's README shows this for
 Symfony's `deserialize()`, which constructs the class named in its second
 argument. This package's string-callable provider is a larger example: it
 resolves `'Class::method'` strings through PHPStan's reflection and the
@@ -142,7 +142,7 @@ services:
 
 ## Checking that it works
 
-Ask shipmonk how it evaluated a member you expect to be alive:
+Ask dead-code-detector how it evaluated a member you expect to be alive:
 
 ```neon
 parameters:

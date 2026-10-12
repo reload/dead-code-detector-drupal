@@ -17,7 +17,7 @@ final class ConfigEntityPropertyUsageProviderTest extends DeadCodeRuleTestCase
     {
         yield 'config entity property'
             => ['Drupal\example\ConfigEntity\ConfigEntityAccessedByName::$propertyFromConfiguration'];
-        yield 'config entity property declared in a trait, which shipmonk reports on the trait'
+        yield 'config entity property declared in a trait, which dead-code-detector reports on the trait'
             => ['Drupal\example\ConfigEntity\TraitWithConfigEntityProperty::$propertyFromTrait'];
         yield 'config entity property declared in a trait\'s trait'
             => ['Drupal\example\ConfigEntity\InnerTraitWithConfigEntityProperty::$propertyFromInnerTrait'];

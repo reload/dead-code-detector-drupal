@@ -44,10 +44,10 @@ includes:
 > included. Code outside the analysed paths does not count as library code,
 > its callers are invisible, and overrides of its members can be reported.
 
-**Map your custom entity types for phpstan-drupal.** The detector only
-follows calls whose target PHPStan can type, and phpstan-drupal only knows
-core's entity types. For yours, `$entity->foo()` otherwise keeps every method
-named `foo` alive, or with shipmonk's `usageOverMixed` excluder reports false
+**Map your custom entity types for phpstan-drupal.** The detector only follows
+calls whose target PHPStan can type, and phpstan-drupal only knows core's entity
+types. For yours, `$entity->foo()` otherwise keeps every method named `foo`
+alive, or with dead-code-detector's `usageOverMixed` excluder reports false
 positives instead.
 
 ```neon
@@ -102,15 +102,16 @@ test calls, reports:
 - `*.services.yml`: constructors, autowired services included; `factory`,
   `calls` and `configurator` methods; the methods core calls through the
   `access_check`, `cache.context` and `service_collector` tags
-- `getSubscribedEvents()` and `#[AsCommand]` through shipmonk's Symfony support
+- `getSubscribedEvents()` and `#[AsCommand]` through dead-code-detector's
+  Symfony support
 
 ### Routing
 
 - `*.routing.yml`: `_controller` as `Class::method`, `service:method` or an
   invokable class, `_title_callback`, `_custom_access`, `_form` and
   `route_callbacks`, with the constructors of the classes Drupal builds
-- `#[Route]` on controllers (Drupal 11.4+): the constructor; shipmonk counts
-  the routed methods
+- `#[Route]` on controllers (Drupal 11.4+): the constructor; dead-code-detector
+  counts the routed methods
 - `*.permissions.yml` `permission_callbacks`
 - access checkers' `access()`
 
@@ -119,8 +120,8 @@ test calls, reports:
 - `#[Hook]` on a method, or on a class with `method:` or `__invoke`, in
   modules and themes, with the constructors of hook classes
 - Hux's `#[Hook]`, `#[Alter]` and `#[ReplaceOriginalHook]`
-- Procedural hooks need nothing: shipmonk does not report functions, and
-  every function body is an entry point
+- Procedural hooks need nothing: dead-code-detector does not report functions,
+  and every function body is an entry point
 
 ### Plugins, entities and validation
 
@@ -137,7 +138,7 @@ test calls, reports:
   and batch callbacks, `hook_theme()` and field definitions
 - the constructor too, when Drupal instantiates the class for the call
 - they count from where they appear, so a callback named only by dead code
-  is dead too; array callables are shipmonk's own
+  is dead too; array callables are dead-code-detector's own
 
 ### Twig templates
 
@@ -159,9 +160,9 @@ test calls, reports:
 - hooks with `#[CLI\Hook]` or `@hook`
 - command class constructors, and `create()` factories
 - Drush 13's `#[AsCommand]` commands and `#[AsEventListener]` listeners,
-  through shipmonk's Symfony support
+  through dead-code-detector's Symfony support
 
-### shipmonk's own providers, active in any Drupal site
+### dead-code-detector's own providers, active in any Drupal site
 
 - Symfony event subscribers, `#[Required]`, `#[Route]` methods,
   `#[AsMessageHandler]` handlers
@@ -172,10 +173,9 @@ by one, with what covers each and what is not covered.
 
 ## Library code
 
-- Drupal core, contrib modules and themes, and everything else Composer
-  installs is library code, wherever Composer put it: `web/core`,
-  `web/modules/contrib` or `vendor/`. shipmonk alone treats only `vendor/`
-  that way.
+- Drupal core, contrib modules and themes, and everything else Composer installs
+  is library code, wherever Composer put it: `web/core`, `web/modules/contrib`
+  or `vendor/`. dead-code-detector alone treats only `vendor/` that way.
 - Library code is never reported, and a member that overrides or implements
   a library member counts as used: a Views field plugin's `render()`, a
   migrate process plugin's `transform()`.
@@ -188,8 +188,8 @@ by one, with what covers each and what is not covered.
 - Test code itself is still analysed.
 - Members only tests use are reported with a suffix, as `fromLegacyExport()`
   above: `(all usages excluded by drupalTests excluder)`.
-- shipmonk's own tests excluder works from `autoload-dev`, which Drupal sites
-  do not declare; this one replaces it.
+- dead-code-detector's own tests excluder works from `autoload-dev`, which
+  Drupal sites do not declare; this one replaces it.
 
 ## Configuration
 
@@ -219,15 +219,16 @@ Those two switches are the whole configuration, by design:
 - Site-specific callers get a provider in the site, or an `@api` tag; see
   [customization](#customization).
 
-shipmonk's own parameters still apply. This package cannot change their
-defaults, because extension-installer loads shipmonk's rules after this
-package's, so switching off a kind of finding is yours to do.
+dead-code-detector's own parameters still apply. This package cannot change
+their defaults, because extension-installer loads dead-code-detector's rules
+after this package's, so switching off a kind of finding is yours to do.
 `shipmonkDeadCode.usageExcluders.usageOverMixed.enabled` is the one most sites
 want to decide on.
 
 ## Customization
 
-Use shipmonk's built-in mechanisms when the detector cannot see a caller:
+Use dead-code-detector's built-in mechanisms when the detector cannot see a
+caller:
 
 - `@api` on a member marks it and its overrides as used; on a class or
   interface, the members that type declares and their overrides. It suits
@@ -293,7 +294,7 @@ when the mechanism belongs in this package instead.
   on by deleting code.
 - Only custom code is reported. There is no mode for contrib modules, where
   every public member is potential API, and no reporting of dead functions,
-  which shipmonk does not analyse.
+  which dead-code-detector does not analyse.
 - Tests are a directory named `tests` below an analysed path; a test module
   elsewhere counts as production code.
 
@@ -306,12 +307,12 @@ when the mechanism belongs in this package instead.
 
 ### Callers outside Drupal's wiring
 
-- Symfony's serializer constructing input objects, graphql-php reading
-  response properties by name, and a `method_exists()` check before a call
-  are invisible to shipmonk and to this package alike. Mark such classes with
+- Symfony's serializer constructing input objects, graphql-php reading response
+  properties by name, and a `method_exists()` check before a call are invisible
+  to dead-code-detector and to this package alike. Mark such classes with
   `@api`, or write a provider for the library.
 
-### In shipmonk
+### In dead-code-detector
 
 - A property that a trait, the class using it or that class's parent declares
   again is reported as unused.
@@ -320,7 +321,7 @@ when the mechanism belongs in this package instead.
 
 ## Debugging
 
-To see why a member counts as used, or does not, ask shipmonk:
+To see why a member counts as used, or does not, ask dead-code-detector:
 
 ```neon
 parameters:
@@ -343,8 +344,8 @@ it either, so run `phpstan clear-result-cache` after editing one.
   and the measurement behind keeping it.
 - [Writing a usage provider](docs/extending.md): for custom code, contrib
   modules and libraries.
-- [Related work](docs/related-work.md): shipmonk, phpstan-drupal, Drupal
-  Canvas and drupal-rector, and what this package takes from each.
+- [Related work](docs/related-work.md): dead-code-detector, phpstan-drupal,
+  Drupal Canvas and drupal-rector, and what this package takes from each.
 - Measurements on [dpl-web] and [Canvas][canvas].
 
 ## Contributing

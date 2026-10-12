@@ -14,7 +14,7 @@ use ShipMonk\PHPStan\DeadCode\Graph\ClassMemberUsage;
 /**
  * Usages from tests do not keep code outside tests alive.
  *
- * Sites declare no autoload-dev for Drupal's test namespaces, so shipmonk's
+ * Sites declare no autoload-dev for Drupal's test namespaces, so dead-code-detector's
  * own tests excluder finds no test code.
  *
  * @see https://www.drupal.org/docs/automated-testing

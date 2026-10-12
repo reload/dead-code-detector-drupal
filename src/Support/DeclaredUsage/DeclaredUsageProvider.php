@@ -18,7 +18,7 @@ use ShipMonk\PHPStan\DeadCode\Provider\VirtualUsageData;
  * Marks the methods a mechanism's wiring declares as used.
  *
  * Usages are emitted while analysing the class they name, as references
- * through that class, so shipmonk resolves methods declared in its ancestors.
+ * through that class, so dead-code-detector resolves methods declared in its ancestors.
  */
 abstract class DeclaredUsageProvider implements MemberUsageProvider
 {

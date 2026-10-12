@@ -16,7 +16,7 @@ use function in_array;
  * Properties that library code reads or writes by name on subtypes of a type.
  *
  * A trait's property is referenced through the class using the trait, which
- * shipmonk resolves to the trait.
+ * dead-code-detector resolves to the trait.
  */
 abstract class PropertiesAccessedByNameUsageProvider extends ReflectionBasedMemberUsageProvider
 {

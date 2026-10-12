@@ -11,7 +11,7 @@ use WeakMap;
  * Files that usages declared outside PHP come from: wiring YAML, templates.
  *
  * Shipmonk's virtual usages carry no file, so providers record their files
- * here, and the tests excluder, which shipmonk hands the same usage objects,
+ * here, and the tests excluder, which dead-code-detector hands the same usage objects,
  * reads them back.
  */
 final class OriginFiles

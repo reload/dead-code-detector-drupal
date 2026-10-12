@@ -81,26 +81,26 @@ $variables['url'] = $node->toUrl()->toString();
 $variables['title'] = $variables['content']['link'][0]['#title'];
 ```
 
-- **The method calls happen in PHP,** where shipmonk sees them. Procedural
-  `*_preprocess_*` functions in `.module` and `.theme` files are analysed,
-  as phpstan-drupal adds those extensions, and are entry points.
+- **The method calls happen in PHP,** where dead-code-detector sees them.
+  Procedural `*_preprocess_*` functions in `.module` and `.theme` files are
+  analysed, as phpstan-drupal adds those extensions, and are entry points.
   `#[Hook('preprocess_...')]` methods count as hooks. Render arrays built in
   controllers or builders (`'#items' => $this->getItems()`) are the same.
 - **What the template reads are array keys,** not class members, so there is
   nothing to mark and nothing to miss. This is why Twig matching keeps so
   little alive.
-- **Untyped values in preprocess:** `$variables['node']` is `mixed` to
-  PHPStan, so `$variables['node']->getFoo()` keeps every method named
-  `getFoo` alive, by shipmonk's default. With `usageOverMixed`, such calls
-  give false positives instead. A `@var` annotation or an `instanceof` check
-  types the call.
+- **Untyped values in preprocess:** `$variables['node']` is `mixed` to PHPStan,
+  so `$variables['node']->getFoo()` keeps every method named `getFoo` alive, by
+  dead-code-detector's default. With `usageOverMixed`, such calls give false
+  positives instead. A `@var` annotation or an `instanceof` check types the
+  call.
 - **Array keys make name matching less precise,** not more useful. A key such
   as `.uri` or `.title` can match a class member by coincidence.
-- **Not covered:** a variable that preprocess computes but no template
-  reads. It is dead code in an array key, not a class member, so shipmonk
-  cannot report it. Finding it would mean pairing `$variables` assignments
-  with template accesses per theme hook, the same theme-hook modelling that
-  makes typing templates expensive.
+- **Not covered:** a variable that preprocess computes but no template reads. It
+  is dead code in an array key, not a class member, so dead-code-detector cannot
+  report it. Finding it would mean pairing `$variables` assignments with
+  template accesses per theme hook, the same theme-hook modelling that makes
+  typing templates expensive.
 
 ## Measured value
 
@@ -148,11 +148,11 @@ getters from templates before building either.
 
 ## How it got here
 
-- Wiring is [read statically](../README.md#by-design), and
-  [when unsure, code is used](../README.md#by-design), so name
-  matching came first. shipmonk's own Twig support covers Twig extension
-  callbacks and Symfony's `#[Template]` view data, neither of which reaches
-  Drupal's templates.
+- Wiring is [read statically](../README.md#by-design), and [when unsure, code is
+  used](../README.md#by-design), so name matching came first.
+  dead-code-detector's own Twig support covers Twig extension callbacks and
+  Symfony's `#[Template]` view data, neither of which reaches Drupal's
+  templates.
 - The first version matched `*.html.twig` with a regular expression. Twig's
   lexer replaced it, so strings, comments and `verbatim` blocks no longer
   yield names and `?.` does. Reading every `*.twig` brought in
