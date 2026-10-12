@@ -51,7 +51,10 @@ Always use the make targets, and run the checks for every area you touch.
 - `make test-coverage`, `make test-mutation`: coverage with pcov, and
   Infection, in the image `Dockerfile` builds from the official one, since no
   official image ships a coverage driver and the host PHP may lack one.
-  `MUTATE="src/Core/Hook/HookMethods.php"` limits the mutation run to files.
-  Not part of `make checks`.
+  Infection mutates the decision classes, those carrying `@phpstan-pure`, and
+  fails on any covered mutant the tests miss; `infection.json5` lists the
+  mutants ignored, each with its reason.
+  `MUTATE="src/Core/Hook/HookMethods.php"` limits a run to files. Neither
+  target is part of `make checks`.
 
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector

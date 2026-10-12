@@ -25,8 +25,11 @@ php-image: ## Build the image the Docker targets run in (see Dockerfile).
 test-coverage: vendor php-image ## Measure test coverage of src (PHPUnit with pcov, in Docker).
 	$(IN_PHP_IMAGE) vendor/bin/phpunit --coverage-text
 
+# The decision classes; readers and providers are only reached through rule tests.
+MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
+
 # One thread: concurrent rule tests collide in shipmonk's usage cache under /tmp.
-test-mutation: vendor php-image ## Mutation-test src (Infection, in Docker; MUTATE= limits it to files).
+test-mutation: vendor php-image ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
 	$(IN_PHP_IMAGE) vendor/bin/infection --threads=1 --show-mutations=max --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).

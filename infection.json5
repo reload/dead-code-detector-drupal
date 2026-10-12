@@ -3,5 +3,43 @@
     "timeout": 120,
     "logs": {"text": "var/infection/infection.log", "summary": "var/infection/summary.log"},
     "tmpDir": "var/infection/tmp",
-    "mutators": {"@default": true}
+    // Every covered mutant must die or be ignored below with its reason, so an escape is a missing test.
+    "minCoveredMsi": 100,
+    "ignoreMsiWithNoMutations": true,
+    "mutators": {
+        "@default": true,
+        // Usage notes are prose for the report; no test asserts their wording.
+        "Concat": {"ignoreSourceCodeByRegex": [".*\\$note.*", ".*' of ' \\. .*"]},
+        "ConcatOperandRemoval": {"ignoreSourceCodeByRegex": [".*\\$note.*", ".*' of ' \\. .*"]},
+        // Readers memoise what they read; reading again gives the same data.
+        "AssignCoalesce": {"ignoreSourceCodeByRegex": ["return \\$this->\\w+ \\?\\?= self::parse\\(.*"]},
+        // A larger explode limit still yields the two pieces used.
+        "IncrementInteger": {"ignoreSourceCodeByRegex": [".*explode\\(.*, 2\\)[;,]"]},
+        // Arrays used as sets: only their keys are read.
+        "TrueValue": {"ignoreSourceCodeByRegex": [".*\\] = true;", ".*=> true\\].*"]},
+        "ArrayItemRemoval": {"ignoreSourceCodeByRegex": ["\\$visited = \\[\\$aliasId => true\\];"]},
+        // Named and positional attribute arguments never occur together.
+        "Coalesce": {"ignoreSourceCodeByRegex": [
+            "\\$hookName = \\$arguments\\['hook'\\] \\?\\? .*",
+            "\\$methodName = \\$attribute->getArguments\\(\\)\\['method'\\] \\?\\? .*",
+        ]},
+        // DeclaredUsages strips the leading backslash again; ServiceWiring::classOf() has its own test.
+        "UnwrapLtrim": {"ignoreSourceCodeByRegex": [
+            "=> \\[ltrim\\(\\$value\\[0\\], .*",
+            "is_string\\(\\$value\\) && str_contains\\(\\$value, '::'\\) => explode\\('::', ltrim\\(\\$value, .*",
+            "return self::isClassName\\(\\$serviceId\\) \\? ltrim\\(\\$serviceId, .*",
+            "return self::isClassName\\(\\$target\\) \\? \\[ltrim\\(\\$target, .*",
+        ]},
+        // Guards against shapes neither Drupal nor Composer writes: numeric route names, a match
+        // arm setting one of two values, a Composer dataset without root or versions.
+        "LogicalOr": {"ignoreSourceCodeByRegex": [
+            "if \\(!is_string\\(\\$routeName\\) \\|\\| !is_array\\(\\$route\\)\\) \\{",
+            "if \\(\\$target === null \\|\\| \\$methodName === null\\) \\{",
+            "if \\(!is_array\\(\\$dataset\\) \\|\\| !is_array\\(\\$dataset\\['versions'\\] \\?\\? null\\)\\) \\{",
+            "if \\(!is_string\\(\\$packageName\\) \\|\\| !is_array\\(\\$package\\) \\|\\| .*",
+        ]},
+        "LogicalAnd": {"ignoreSourceCodeByRegex": [
+            "\\$rootDirectory = is_array\\(\\$root\\) && is_string\\(\\$root\\['install_path'\\] \\?\\? null\\)",
+        ]},
+    },
 }
