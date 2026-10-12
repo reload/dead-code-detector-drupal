@@ -35,9 +35,7 @@ jobs:
         run: make lint-yaml
   commitlint:
     name: Commit messages
-    # Dependabot's subjects start with a capital, which the convention forbids
-    # and Dependabot cannot change; they carry a type, which is what matters.
-    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
