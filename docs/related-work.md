@@ -1,7 +1,7 @@
 # Related work
 
 This page covers existing projects in the same space and how this package
-relates to each. Facts are as of 2026-10-02.
+relates to each. Facts are as of 2026-10-12.
 
 ## shipmonk/dead-code-detector
 
@@ -27,8 +27,8 @@ DCD does the analysis.
   [README](../README.md#what-counts-as-used).
 - Code copied from it is credited to it.
 
-**Upstream:** DCD's README admits built-in support for frameworks. At the end
-of the project, consider these candidates:
+**Upstream:** DCD's README admits built-in support for frameworks. These are
+the candidates to propose there:
 
 - the install-path fix to `VendorUsageProvider`
 - `MyCLabs\Enum\Enum` constants
@@ -113,9 +113,9 @@ Before that, its providers overlapped with this package only in part:
 - [#3591672][is-called-by-drupal] proposes `#[IsCalledByDrupal(reason)]` for
   marking code in Canvas as used. This package would recognise a similar
   attribute if core adopts one.
-- Contacting Canvas's maintainers is deferred. If the benchmark shows this
-  package covers Canvas's generic mechanisms, Canvas could replace most of its
-  providers with it.
+- Canvas's maintainers have not been contacted. The benchmark shows this
+  package covers Canvas's generic mechanisms, so Canvas could replace most of
+  its providers with it.
 
 ## palantirnet/drupal-rector
 

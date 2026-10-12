@@ -29,7 +29,7 @@ How to read the tables:
 
 | Shape | Reaches | Covered by | Tests |
 |---|---|---|---|
-| `*.services.yml`: `class`, `arguments`, `autowire` | the constructor, by the container | `Core\Services\ServiceUsageProvider` | `Core/Services`, `Core/Services` |
+| `*.services.yml`: `class`, `arguments`, `autowire` | the constructor, by the container | `Core\Services\ServiceUsageProvider` | `Core/Services` |
 | `factory`, `calls`, `configurator` | the named methods | `Core\Services\ServiceUsageProvider` | `Core/Services` |
 | tags `access_check` (`method`), `cache.context`, `service_collector` (`call`) | methods core calls without an interface | `Core\Services\ServiceUsageProvider` | `Core/Services` |
 | other tags: `event_subscriber`, `paramconverter`, `breadcrumb_builder`, `theme_negotiator`, `normalizer`, `logger`, `stream_wrapper`, `http_middleware`, `access_policy` and the rest | interface methods | library rule | `Support/LibraryCode` |
