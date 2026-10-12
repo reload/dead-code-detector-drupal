@@ -29,12 +29,13 @@ jobs:
         with:
           node-version: 24
 
-      # Packagist picks the tag up through its GitHub hook; nothing is published here.
+      # Packagist picks the tag up through its GitHub hook; nothing is published
+      # here. The plugins come from .releaserc.json: the action's skip_npm_plugin
+      # input would replace that list with its own.
       - name: Release
         uses: cycjimmy/semantic-release-action@v8
         with:
           semantic_version: 25
-          skip_npm_plugin: true
           extra_plugins: |
             @semantic-release/changelog@7
             @semantic-release/git@11
