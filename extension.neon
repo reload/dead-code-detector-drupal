@@ -168,3 +168,8 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\Validation\ConstraintPropertyUsageProvider
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Contrib\Drush\DrushUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
