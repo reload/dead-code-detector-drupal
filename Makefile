@@ -33,9 +33,9 @@ test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit 
 # sharing one analysis, so Infection cannot tell which test observes a mutant there.
 MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
 
-# One thread: concurrent rule tests collide in shipmonk's usage cache under /tmp.
+# Parallel: rule-test.neon turns off shipmonk's on-disk usage cache, where parallel runs collide.
 test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
-	$(PHP_RUNNER) vendor/bin/infection --threads=1 --show-mutations=max --no-progress $(MUTATE)
+	$(PHP_RUNNER) vendor/bin/infection --threads=max --show-mutations=max --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).
 	vendor/bin/phpcbf

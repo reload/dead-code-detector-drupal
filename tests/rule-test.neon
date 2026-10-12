@@ -9,3 +9,7 @@ services:
 parameters:
     shipmonkDeadCode:
         reportTransitivelyDeadMethodAsSeparateError: true
+        # Offloading collector data to disk serves large analyses; the cache's
+        # garbage collection deletes what parallel test processes still need.
+        cache:
+            offloadCollectorData: false
