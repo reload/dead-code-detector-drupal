@@ -1,101 +1,16 @@
 # Dead code detector for Drupal
 
-This package adds Drupal support to [shipmonk/dead-code-detector][dcd]: usage
-providers that teach it how Drupal calls code. Without them, the detector
-reports Drupal's own wiring as dead code. With them, it reports the dead class
-members in custom code for Drupal 11.3 and later.
-
-**Status**: the spike is complete and the package is not released. On
-dpl-web, 78% of findings are real dead code. On Drupal Canvas, it finds every
-dead member that Canvas's maintainers removed. On ten Reload client projects,
-22 of 23 findings are members nothing uses. See the measurements for
-[dpl-web](docs/measurements/dpl-web.md), [Canvas](docs/measurements/canvas.md)
-and [Reload's projects](docs/measurements/reload-projects.md), and the
-[design](docs/design.md).
-
-## What it does
-
-shipmonk's detector reports class members that nothing uses: methods,
-constants, enum cases, and properties that are never read or never written.
-This package tells it which code is yours, and how Drupal calls that code.
-
-### Code loading
-
-- **Only custom code is reported.** Drupal core, contrib modules and themes,
-  and everything else Composer installs is library code, wherever Composer
-  put it: `web/core`, `web/modules/contrib` or `vendor/`. shipmonk alone treats
-  only `vendor/` that way. Library code is never reported, and a member that
-  overrides or implements a library member counts as used, such as a Views
-  field plugin's `render()` or a migrate process plugin's `transform()`.
-- **The cache follows Drupal's wiring.** PHPStan's result cache only tracks
-  PHP files. This package adds the files it reads to the cache key: Drupal's
-  YAML wiring under the analysed paths, Twig templates and the site's settings
-  files. Changing or moving one of them makes PHPStan analyse everything
-  again.
-- **Tests do not keep code alive.** Usages in a `tests` directory do not keep
-  code outside tests alive, whether PHP calls, a test module's YAML or a test
-  theme's templates make them. The report says when that is the only reason a
-  member is dead. Test code itself is still analysed. As in shipmonk's own
-  tests excluder, a call on a value of unknown type still keeps every method
-  with that name alive.
-
-### Member usage detection
-
-A member counts as used when Drupal calls it through any of the following:
-
-- **Hooks**:
-  - Procedural hooks: shipmonk does not report functions, and every function
-    body is an entry point, hook or not. Whatever a function calls counts as
-    used.
-  - OOP hooks: `#[Hook]` on a method, or on a class with `method:` or
-    `__invoke`, in modules and themes. Hux's `#[Hook]`, `#[Alter]` and
-    `#[ReplaceOriginalHook]` count too, and so do the constructors of hook
-    classes.
-- **Services** (`*.services.yml`):
-  - constructors, also of autowired services
-  - factories, `calls` and configurators
-  - methods called through the `access_check` and `cache.context` tags
-- **Routes**:
-  - `*.routing.yml`: controllers, whether `Class::method`, `service:method` or
-    invokable, title callbacks, `_custom_access`, forms and `route_callbacks`,
-    and the constructors of the classes Drupal builds for them.
-  - `#[Route]` (Drupal 11.4+): the constructors of the controllers core finds.
-    shipmonk itself counts the routed methods.
-- **Plugins, entities and validation**:
-  - plugin attribute properties, which `AttributeBase::get()` reads
-  - config entity properties, which Drupal writes when it loads the entity
-    and reads when it saves it
-  - `#[ActionMethod]` methods of config entities, which recipes can call
-  - constraint properties set from an options array, for constraints whose
-    constructor does not take named arguments
-  - config schema `Callback` constraints
-- **Drush**: commands and hooks, by attribute or annotation, and command class
-  constructors.
-- **String callables**: `'::method'`, `'Class::method'`, `'Class:method'` and
-  `'service:method'`, written out or built with `Foo::class . '::method'`,
-  and the constructor when Drupal instantiates the class for the call. They
-  count as used from where they appear, so a callback named only by dead code
-  is dead too.
-- **Twig templates**: names that templates under the analysed paths access,
-  limited to the methods Drupal's Twig sandbox lets templates call. The
-  sandbox's lists are read from the site's settings files. See [Twig
-  templates](docs/twig.md) for what this covers and misses.
-- **Calls by name**: members that core and contrib use by name on subtypes of
-  a type that does not declare them:
-  - REST resources' HTTP methods
-  - JSON:API resources' `process()` and GraphQL data producers' `resolve()`
-  - access checkers' `access()`
-- **shipmonk's built-in support**, which switches on in any Drupal site:
-  - Symfony event subscribers, `#[Required]` setters and properties,
-    `#[Route]` methods and `#[AsMessageHandler]` handlers
-  - Twig extension callbacks
-  - PHPUnit tests and data providers, when PHPUnit is installed
-  - Behat contexts, when Behat is installed
-
-[Coverage](docs/coverage.md) lists the documented Drupal mechanisms one by one,
-with what covers each.
+Drupal support for [shipmonk/dead-code-detector][dcd], the PHPStan extension
+that reports class members nothing uses: methods, constants, enum cases, and
+properties that are never read or never written. On a Drupal site it drowns
+in false positives, because Drupal calls code through YAML, attributes,
+templates and conventions it does not know. This package adds the usage
+providers that teach it those mechanisms, so what remains in the report is
+dead code in your own modules, themes and profiles.
 
 ## Installation
+
+The package covers Drupal 11.3 and later on PHP 8.3 and later.
 
 ```sh
 composer require --dev reload/dead-code-detector-drupal
@@ -124,13 +39,13 @@ overrides of its members can be reported as dead.
 
 **Map your custom entity types for phpstan-drupal.** The detector only
 follows calls whose target PHPStan can type, and for Drupal that typing comes
-from [phpstan-drupal][phpstan-drupal]. phpstan-drupal only knows core's entity
-types. For your own, calls on loaded entities have no known type, and the
-detector then has to guess:
+from phpstan-drupal, which only knows core's entity types. For your own, calls
+on loaded entities have no known type, and the detector then has to guess:
 
 - **By default**, a call like `$entity->foo()` keeps every method named `foo`
   alive, which hides dead code.
-- **With `usageOverMixed`**, it reports false positives instead.
+- **With shipmonk's `usageOverMixed` excluder**, it reports false positives
+  instead.
 
 Map your entity types:
 
@@ -141,6 +56,66 @@ parameters:
             my_entity:
                 class: Drupal\my_module\Entity\MyEntity
 ```
+
+## What counts as used
+
+shipmonk reports class members that nothing uses. This package tells it which
+code is yours, and how Drupal reaches that code.
+
+**Only custom code is reported.** Drupal core, contrib modules and themes,
+and everything else Composer installs is library code, wherever Composer put
+it: `web/core`, `web/modules/contrib` or `vendor/`. shipmonk alone treats only
+`vendor/` that way. Library code is never reported, and a member that
+overrides or implements a library member counts as used, such as a Views
+field plugin's `render()` or a migrate process plugin's `transform()`.
+
+**Tests do not keep code alive.** Usages from a `tests` directory do not keep
+code outside tests alive, whether PHP calls, a test module's YAML or a test
+theme's templates make them. The report says when that is the only reason a
+member is dead. Test code itself is still analysed.
+
+A member counts as used when Drupal reaches it through any of these:
+
+- **Hooks**: `#[Hook]` on a method, or on a class with `method:` or
+  `__invoke`, in modules and themes; Hux's `#[Hook]`, `#[Alter]` and
+  `#[ReplaceOriginalHook]`; and the constructors of hook classes. Procedural
+  hooks need nothing: shipmonk does not report functions, and every function
+  body is an entry point, so whatever a function calls counts as used.
+- **Services** (`*.services.yml`): constructors, autowired services included;
+  factories, `calls` and configurators; and the methods core calls through
+  the `access_check`, `cache.context` and `service_collector` tags.
+- **Routes**: in `*.routing.yml`, controllers written as `Class::method`,
+  `service:method` or an invokable class, title callbacks, `_custom_access`,
+  forms and `route_callbacks`, with the constructors of the classes Drupal
+  builds for them. With `#[Route]` on a controller (Drupal 11.4+), the
+  constructor; shipmonk itself counts the routed methods.
+- **Plugins, entities and validation**: plugin attribute properties, which
+  `AttributeBase::get()` reads; config entity properties, which Drupal writes
+  on load and reads on save; `#[ActionMethod]` methods of config entities,
+  which recipes call; constraint properties set from an options array; and
+  config schema `Callback` constraints.
+- **Drush**: commands and hooks, by attribute or annotation, and the
+  constructors of command classes.
+- **String callables**: `'::method'`, `'Class::method'`, `'Class:method'` and
+  `'service:method'`, written out or built with `Foo::class . '::method'`,
+  plus the constructor when Drupal instantiates the class for the call. They
+  count as used from where they appear, so a callback named only by dead code
+  is dead too.
+- **Twig templates**: names that templates under the analysed paths access,
+  limited to the methods Drupal's Twig sandbox lets templates call. See
+  [Twig templates](docs/twig.md) for what this covers and misses.
+- **Calls by name**: members that core and contrib call by name on subtypes
+  of a type that does not declare them: REST resources' HTTP methods,
+  JSON:API resources' `process()`, GraphQL data producers' `resolve()`,
+  access checkers' `access()`, and the `on404`-style handlers of HTTP
+  exception subscribers.
+- **shipmonk's built-ins**, which switch on in any Drupal site: Symfony event
+  subscribers, `#[Required]` setters, `#[Route]` methods and
+  `#[AsMessageHandler]` handlers; Twig extension callbacks; PHPUnit tests
+  and data providers; Behat contexts.
+
+[Coverage](docs/coverage.md) lists Drupal's documented mechanisms one by one,
+with what covers each.
 
 ## Configuration
 
@@ -157,16 +132,68 @@ parameters:
             enabled: true
 ```
 
-The Twig sandbox needs no configuration. The package reads the
-`twig_sandbox_allowed_classes`, `twig_sandbox_allowed_methods` and
-`twig_sandbox_allowed_prefixes` settings from the PHP files in your Drupal
-root's `sites/*/` directories, statically, and falls back to core's defaults.
-It reads literal lists only, so a list computed at runtime, for example from
-an environment variable, is not seen.
+Those two switches are the whole configuration, and that is a design choice
+rather than an omission:
 
-shipmonk's own settings still apply. For example,
-`shipmonkDeadCode.usageExcluders.usageOverMixed.enabled: true` stops calls on
-untyped values from keeping every method with that name alive.
+- **Everything else is read from the site.** The services, routes, schema and
+  permissions come from the YAML under the analysed paths. The Twig sandbox's
+  `twig_sandbox_allowed_classes`, `_methods` and `_prefixes` come from the PHP
+  files in your Drupal root's `sites/*/` directories, read statically, with
+  core's defaults as the fallback. Nothing is declared twice, so nothing can
+  drift from what the site does.
+- **Contrib modules are covered one at a time**, each with a provider that
+  knows how that module calls code. A list of attribute or class names could
+  not say that, so there is no such list to configure.
+- **Site-specific callers get a provider in the site**, or an `@api` tag. See
+  [when the detector cannot see the caller](#when-the-detector-cannot-see-the-caller).
+
+shipmonk's own parameters still apply, and this package does not change
+their defaults. `shipmonkDeadCode.usageExcluders.usageOverMixed.enabled` is
+the one most sites want to decide on.
+
+## Limitations
+
+### By design
+
+- **Wiring is read statically.** Drupal is not bootstrapped and no database
+  is needed. Wiring done in PHP rather than YAML, such as a service
+  provider's `register()`, is seen only where it names a method as a string
+  callable.
+- **Templates are matched by name.** A template does not say what class a
+  variable holds, so a public member of any analysed class counts as used if
+  a template accesses its name and the sandbox allows it. A coincidental name
+  keeps a dead member alive, and a sandbox list computed at runtime is not
+  seen. [Twig templates](docs/twig.md) records what this costs: about one
+  hidden finding per site.
+- **When unsure, code is used.** A call on a value PHPStan cannot type keeps
+  every member of that name alive. That is shipmonk's default, kept because a
+  report is something people act on by deleting code.
+- **Only custom code is reported.** There is no mode for contrib modules,
+  where every public member is potential API, and no reporting of dead
+  functions, which shipmonk does not analyse.
+- **Tests are a directory named `tests`** below an analysed path. A test
+  module elsewhere counts as production code.
+
+### Not covered yet
+
+The [coverage map](docs/coverage.md#not-covered) keeps the current list. The
+costliest gap is constructors reached only through core's
+`AutowireTrait::create()`, such as forms built with `getForm()` or validators
+with injected services, when nothing this package reads names the class.
+
+### Callers outside Drupal's wiring
+
+Symfony's serializer constructing input objects, graphql-php reading response
+properties by name, and a `method_exists()` check before a call are invisible
+to shipmonk and to this package alike. Mark such classes with `@api`, or write
+a provider for the library.
+
+### In shipmonk
+
+A property that a trait, the class using it or that class's parent declares
+again is reported as unused, and a subclass redeclaring a property with a
+default does not count as writing it. Both are shipmonk limitations the
+measurements found.
 
 ## When the detector cannot see the caller
 
@@ -184,10 +211,9 @@ Use shipmonk's built-in mechanisms:
 - **A baseline** handles legacy code.
 
 For a caller this package does not know, such as a contrib module or a
-library, write a usage provider of your own. See shipmonk's
-[customization][dcd-customization] docs. For example, `myclabs/php-enum`
-reads its enums' constants by name. A site that uses it can add this
-provider:
+library, write a usage provider of your own: a few lines of PHP, registered
+in your PHPStan config. For example, `myclabs/php-enum` reads its enums'
+constants by name, so a site using it adds this provider:
 
 ```php
 <?php
@@ -220,17 +246,35 @@ services:
             - shipmonk.deadCode.memberUsageProvider
 ```
 
+[Writing a usage provider](docs/extending.md) covers the other shapes a
+provider takes, including the bases this package offers for members called by
+name, how to check that a provider works, and when the mechanism belongs in
+this package instead.
+
+## Documentation
+
+- [Design](docs/design.md): what was decided and why, including the
+  principles behind the limitations above.
+- [Coverage](docs/coverage.md): Drupal's documented mechanisms mapped to the
+  providers, and what is not covered.
+- [Twig templates](docs/twig.md): how name matching works, what it misses,
+  and the measurement behind keeping it.
+- [Writing a usage provider](docs/extending.md): for custom code, contrib
+  modules and libraries.
+- [Related work](docs/related-work.md): shipmonk, phpstan-drupal, Drupal
+  Canvas and drupal-rector, and what this package takes from each.
+- Measurements on [dpl-web] and [Canvas][canvas].
+
 ## Development
 
-See [AGENTS.md](AGENTS.md) for the commands and conventions, and
-[related work](docs/related-work.md) for how this package relates to existing
-tools.
+See [AGENTS.md](AGENTS.md) for the architecture, conventions and commands.
 
 ## License
 
 MIT, see [LICENSE](LICENSE).
 
+[canvas]: docs/measurements/canvas.md
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector
-[dcd-customization]: https://github.com/shipmonk-rnd/dead-code-detector#customization
+[dpl-web]: docs/measurements/dpl-web.md
 [extension-installer]: https://github.com/phpstan/extension-installer
 [phpstan-drupal]: https://github.com/mglaman/phpstan-drupal
