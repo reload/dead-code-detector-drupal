@@ -1,0 +1,12 @@
+example_test.routed_only_by_test_module:
+  path: '/example-test/production'
+  defaults:
+    _controller: '\Drupal\example\ProductionCode::routedOnlyByTestModule'
+  requirements:
+    _access: 'TRUE'
+example_test.routed_to_test_module:
+  path: '/example-test'
+  defaults:
+    _controller: '\Drupal\example_test\Controller\TestModuleController::routedByTestModule'
+  requirements:
+    _access: 'TRUE'

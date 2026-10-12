@@ -1,0 +1,6 @@
+example.routed_by_module:
+  path: '/example'
+  defaults:
+    _controller: '\Drupal\example\ProductionCode::routedByModule'
+  requirements:
+    _access: 'TRUE'

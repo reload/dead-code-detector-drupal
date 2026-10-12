@@ -2,10 +2,15 @@ parameters:
     drupalDeadCode:
         twigTemplates:
             enabled: true
+        testsExcluder:
+            enabled: true
 
 parametersSchema:
     drupalDeadCode: structure([
         twigTemplates: structure([
+            enabled: bool()
+        ])
+        testsExcluder: structure([
             enabled: bool()
         ])
     ])
@@ -200,3 +205,17 @@ services:
             originFiles: @drupalDeadCode.originFiles
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.testPaths:
+        type: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths
+        factory: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths(%analysedPaths%)
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestsUsageExcluder
+        arguments:
+            enabled: %drupalDeadCode.testsExcluder.enabled%
+            testPaths: @drupalDeadCode.testPaths
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageExcluder

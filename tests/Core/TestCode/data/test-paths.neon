@@ -1,0 +1,5 @@
+services:
+    drupalDeadCode.testPaths:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureTestPaths::module()
+    drupalDeadCode.drupalFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::testsExcluder()

@@ -1,0 +1,4 @@
+parameters:
+    drupalDeadCode:
+        testsExcluder:
+            enabled: false
