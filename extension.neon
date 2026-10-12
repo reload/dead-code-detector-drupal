@@ -1,0 +1,34 @@
+parameters:
+    drupalDeadCode:
+        twigTemplates:
+            enabled: true
+
+parametersSchema:
+    drupalDeadCode: structure([
+        twigTemplates: structure([
+            enabled: bool()
+        ])
+    ])
+
+services:
+    drupalDeadCode.drupalFiles:
+        type: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(
+            %analysedPaths%,
+            Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter(%excludePaths%),
+            %drupalDeadCode.twigTemplates.enabled%
+        )
+        autowired: false
+
+    drupalDeadCode.settingsFiles:
+        type: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles::find(%drupalDeadCode.twigTemplates.enabled%)
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFilesResultCacheMetaExtension
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+            settingsFiles: @drupalDeadCode.settingsFiles
+        tags:
+            - phpstan.resultCacheMetaExtension

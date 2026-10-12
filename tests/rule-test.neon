@@ -1,0 +1,9 @@
+# No settings from this checkout.
+services:
+    drupalDeadCode.settingsFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles([])
+
+# Transitively dead members are otherwise only mentioned in tips.
+parameters:
+    shipmonkDeadCode:
+        reportTransitivelyDeadMethodAsSeparateError: true
