@@ -14,7 +14,7 @@ final class SettingListsTest extends TestCase
     private const CLASSES = 'twig_sandbox_allowed_classes';
 
     /**
-     * @param list<string> $contents
+     * @param array<string> $contents
      * @param array<string, list<string>> $expectedLists
      */
     #[DataProvider('settingsFiles')]
@@ -24,7 +24,7 @@ final class SettingListsTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{list<string>, array<string, list<string>>}>
+     * @return iterable<string, array{array<string>, array<string, list<string>>}>
      */
     public static function settingsFiles(): iterable
     {
@@ -48,6 +48,16 @@ final class SettingListsTest extends TestCase
             ["<?php \$settings['twig_sandbox_allowed_classes'] = [UppercaseClassKeyword::CLASS];"],
             [self::CLASSES => ['UppercaseClassKeyword']],
         ];
+        yield 'two settings assigned in one file' => [
+            ["<?php \$settings['twig_sandbox_allowed_methods'] = ['methodOfFirstSetting'];\n"
+                . "\$settings['twig_sandbox_allowed_classes'] = ['ClassOfSecondSetting'];"],
+            [self::METHODS => ['methodOfFirstSetting'], self::CLASSES => ['ClassOfSecondSetting']],
+        ];
+        yield 'list assigned and then appended to in one file' => [
+            ["<?php \$settings['twig_sandbox_allowed_methods'] = ['assignedMethod'];\n"
+                . "\$settings['twig_sandbox_allowed_methods'][] = 'appendedAfterwards';"],
+            [self::METHODS => ['assignedMethod', 'appendedAfterwards']],
+        ];
         yield 'lists of several files combined' => [
             [
                 "<?php \$settings['twig_sandbox_allowed_methods'] = ['inFirstFileOnly', 'inBothFiles'];",
@@ -63,6 +73,14 @@ final class SettingListsTest extends TestCase
         ];
         yield 'computed item appended ignored' => [
             ["<?php \$settings['twig_sandbox_allowed_methods'][] = \$computedMethod;"],
+            [],
+        ];
+        yield 'nested key under a setting is no append' => [
+            ["<?php \$settings['twig_sandbox_allowed_methods']['nested'] = 'nestedValue';"],
+            [],
+        ];
+        yield '::class on a variable ignored' => [
+            ["<?php \$settings['twig_sandbox_allowed_classes'] = [\$object::class];"],
             [],
         ];
         yield 'class constant other than ::class ignored' => [
