@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   php:
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }}, ${{ matrix.dependencies }} dependencies
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -26,6 +26,9 @@ jobs:
           - '8.3'
           - '8.4'
           - '8.5'
+        dependencies:
+          - lowest
+          - highest
     steps:
       - uses: actions/checkout@v7
 
@@ -39,8 +42,8 @@ jobs:
       - name: Validate composer.json
         run: make validate-composer
 
-      - name: Install dependencies
-        run: composer install --no-interaction --no-progress
+      - name: Install the ${{ matrix.dependencies }} dependencies
+        run: make dependencies-${{ matrix.dependencies }}
 
       - name: Run phpcs
         run: make lint-php

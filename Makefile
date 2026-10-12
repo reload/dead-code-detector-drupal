@@ -1,9 +1,18 @@
 .DEFAULT_GOAL := help
-.PHONY: analyse-php checks format-php help lint-actions lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
+.PHONY: analyse-php checks dependencies-highest dependencies-lowest format-php help lint-actions lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
 
 vendor: composer.json
 	composer install --no-interaction
 	@touch $@
+
+# The dependency sets the CI "PHP" workflow installs, for the same runs locally.
+dependencies-highest: ## Update to the newest dependencies composer.json allows.
+	composer update --no-interaction --no-progress
+	@touch vendor
+
+dependencies-lowest: ## Update to the oldest dependencies composer.json allows.
+	composer update --no-interaction --no-progress --prefer-lowest --prefer-stable
+	@touch vendor
 
 lint-php: vendor ## Lint PHP code (PHPCS).
 	vendor/bin/phpcs
