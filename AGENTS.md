@@ -96,25 +96,34 @@ Verify every URL before writing it down, with a request, not from memory.
 
 ## Commands
 
-Always use the make targets, and run the checks for every area you touch.
+Run `make help` for the list. Targets that act on one area are named
+`verb-area` (`lint-php`, `test-mutation`, `dependencies-lowest`), so the
+intent maps to the command.
 
-- `make lint-php`, `make analyse-php`, `make test-php`, `make format-php`
-- `make lint-markdown`, `make lint-yaml`, `make lint-actions`
-- `make checks`: everything CI runs
-- `make dependencies-lowest`, `make dependencies-highest`: the oldest and the
-  newest dependencies composer.json allows, which the CI "PHP" workflow tests
-  on PHP 8.3 to 8.5.
-- `make test-coverage`, `make test-mutation`: coverage with pcov, and
-  Infection, in the image `Dockerfile` builds from the official one, since no
-  official image ships a coverage driver and the host PHP may lack one.
-  Infection mutates the decision classes, those carrying `@phpstan-pure`, and
-  fails on any covered mutant the tests miss; `infection.json5` lists the
-  mutants ignored, each with its reason. Keep that scope: readers and
-  providers are reached only through rule tests sharing one analysis, so
-  Infection cannot tell which test observes a mutant there and reports false
-  escapes. `MUTATE="src/Core/Hook/HookMethods.php"` limits a run to files.
-  The CI "PHP" workflow runs the mutation target on the runner's own PHP with
-  `IN_DOCKER=`, so Infection's annotations reach the files. Neither target is
-  part of `make checks`.
+- Run tools through the `make` targets.
+- Before finishing, run the `lint-*`, `analyse-*`, `validate-*` and
+  `test-php` targets for each area touched, and `test-mutation` when a
+  decision class changed. A PHP change that also edits a workflow, a YAML
+  file outside the test fixtures or a Markdown file touches those areas too.
+  `make checks` runs the checks CI runs on every PHP version; mutation
+  testing and the dependency sets are CI jobs of their own.
+- `lint-actions`, `lint-markdown` and `lint-yaml` run tool images with
+  `docker run`. `test-coverage` and `test-mutation` run in the image
+  `php-image` builds from `Dockerfile`, since no official PHP image ships a
+  coverage driver; `IN_DOCKER=` runs them on a host PHP that has one, as CI
+  does. The other targets run on the host PHP.
+
+Caveats not obvious from the command list:
+
+- Mutation testing covers the decision classes only, those carrying
+  `@phpstan-pure`, and fails on any covered mutant the tests miss;
+  `infection.json5` lists the mutants ignored, each with its reason. Keep
+  that scope: readers and providers are reached only through rule tests
+  sharing one analysis, so Infection cannot tell which test observes a mutant
+  there and reports false escapes.
+- `dependencies-lowest` and `dependencies-highest` rewrite `vendor/` and the
+  ignored `composer.lock` with the oldest and the newest versions
+  composer.json allows, which CI tests on PHP 8.3 to 8.5. Later installs keep
+  that set until `make dependencies-highest` restores the newest.
 
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector

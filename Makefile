@@ -38,8 +38,7 @@ php-image: ## Build the image the Docker targets run in (see Dockerfile).
 test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit with pcov, in Docker).
 	$(PHP_RUNNER) vendor/bin/phpunit --coverage-text
 
-# The decision classes. Readers and providers are reached only through rule tests
-# sharing one analysis, so Infection cannot tell which test observes a mutant there.
+# The decision classes; AGENTS.md says why mutation testing stops there.
 MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
 
 # Parallel: rule-test.neon turns off shipmonk's on-disk usage cache, where parallel runs collide.
@@ -66,7 +65,7 @@ lint-yaml: ## Lint YAML files, like the CI "Lint" workflow does.
 lint-actions: ## Lint GitHub Actions workflows, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/repo -w /repo rhysd/actionlint:1.7.7 -color
 
-checks: validate-composer lint-php analyse-php test-php lint-markdown lint-yaml lint-actions ## Run every check CI runs.
+checks: validate-composer lint-php analyse-php test-php lint-markdown lint-yaml lint-actions ## Run the checks CI runs on every PHP version.
 
 help: ## Display a list of the public targets
 # Find lines that starts with a word-character, contains a colon and then a
