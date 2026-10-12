@@ -277,11 +277,32 @@ this package instead.
 
 See [AGENTS.md](AGENTS.md) for the architecture, conventions and commands.
 
+## Releases
+
+Commit messages follow [Conventional Commits][conventional-commits]. CI lints
+every commit in a pull request; `make lint-commits` does the same locally
+against `origin/main`.
+
+On each push to `main`, semantic-release reads the new commits. A `fix`
+commit makes a patch release, a `feat` commit a minor release, and a commit
+with `!` after the type or a `BREAKING CHANGE` footer a major release; other
+types make no release. Versions start below 1.0 from the `v0.0.0` tag on the
+first commit.
+
+A release creates a Git tag and a GitHub release and updates `CHANGELOG.md`.
+Nothing is published from the workflow: Packagist picks the tag up through
+its GitHub hook once the package is registered there.
+
+The release commit is pushed to `main` with the secret `GH_RELEASE_TOKEN`. It
+holds a personal access token with `Contents: Read and write` on this
+repository, from an account on the bypass list of the ruleset on `main`.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).
 
 [canvas]: docs/measurements/canvas.md
+[conventional-commits]: https://www.conventionalcommits.org/
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector
 [dpl-web]: docs/measurements/dpl-web.md
 [extension-installer]: https://github.com/phpstan/extension-installer

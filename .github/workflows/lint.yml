@@ -33,3 +33,16 @@ jobs:
       - uses: actions/checkout@v7
       - name: Run Yamllint
         run: make lint-yaml
+  commitlint:
+    name: Commit messages
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The base branch too, to find the commits the pull request adds.
+          fetch-depth: 0
+      - name: Run commitlint
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: make lint-commits BASE="origin/$BASE_REF"

@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: analyse-php checks dependencies-highest dependencies-lowest format-php help lint-actions lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
+.PHONY: analyse-php checks dependencies-highest dependencies-lowest format-php help lint-actions lint-commits lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
 
 vendor: composer.json
 	composer install --no-interaction
@@ -52,9 +52,15 @@ validate-composer: ## Validate composer.json.
 	composer validate --strict
 
 # Ask Git which files count: markdownlint ignores global excludes (core.excludesFile).
+# The release workflow writes CHANGELOG.md in its own style.
 lint-markdown: ## Lint Markdown files, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/workdir davidanson/markdownlint-cli2:v0.18.1 \
-		$(shell git ls-files --cached --others --exclude-standard '*.md')
+		$(shell git ls-files --cached --others --exclude-standard '*.md' ':!:CHANGELOG.md')
+
+# Conventional Commits, which the release workflow reads to pick the version.
+BASE ?= origin/main
+lint-commits: ## Lint the commit messages since BASE (origin/main), like the CI "Lint" workflow does.
+	@docker run --rm -v "$(CURDIR)":/app -w /app commitlint/commitlint:21.2.3 --from "$(BASE)" --to HEAD --verbose
 
 # GITHUB_ACTIONS/GITHUB_WORKFLOW are forwarded so yamllint's "auto" format emits
 # inline annotations in CI; both are unset locally, so output stays readable.
@@ -65,7 +71,7 @@ lint-yaml: ## Lint YAML files, like the CI "Lint" workflow does.
 lint-actions: ## Lint GitHub Actions workflows, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/repo -w /repo rhysd/actionlint:1.7.7 -color
 
-checks: validate-composer lint-php analyse-php test-php lint-markdown lint-yaml lint-actions ## Run the checks CI runs on every PHP version.
+checks: validate-composer lint-php analyse-php test-php lint-markdown lint-yaml lint-actions ## Run the checks CI runs on every PHP version; lint-commits needs a base.
 
 help: ## Display a list of the public targets
 # Find lines that starts with a word-character, contains a colon and then a

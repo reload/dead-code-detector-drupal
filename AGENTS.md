@@ -18,6 +18,8 @@ it.
 - `docs/related-work.md` and `docs/measurements/`: context and evidence; they
   describe a point in time and say which. Only public corpora are named;
   client projects stay out of the documentation.
+- `CHANGELOG.md`: written by the release workflow from the commit messages.
+  Do not edit it.
 
 Verify every URL before writing it down, with a request, not from memory.
 
@@ -54,6 +56,10 @@ Verify every URL before writing it down, with a request, not from memory.
   built by the container only. shipmonk's rules name providers
   `*UsageProvider` and excluders `*Excluder`.
 - Name fixture classes and members after the case they prove.
+- Commit messages follow Conventional Commits: the release workflow reads
+  them to pick the version and write the changelog, so the type and the
+  subject must say what changed for users. `make lint-commits` checks them
+  against `origin/main`, as CI does on pull requests.
 - phpstan-drupal is a dependency for how it analyses Drupal code; do not
   build on its static maps. Use shipmonk only through its documented
   extension points.

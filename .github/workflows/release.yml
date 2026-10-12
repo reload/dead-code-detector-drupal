@@ -1,0 +1,45 @@
+---
+name: Release
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # Every git push in this job then uses the release token, which is
+          # on the bypass list of the main ruleset. The workflow token is not.
+          token: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # Packagist picks the tag up through its GitHub hook; nothing is published here.
+      - name: Release
+        uses: cycjimmy/semantic-release-action@v8
+        with:
+          semantic_version: 25
+          skip_npm_plugin: true
+          extra_plugins: |
+            @semantic-release/changelog@7
+            @semantic-release/git@11
+            conventional-changelog-conventionalcommits@9
+        env:
+          # A token with bypass rights on the main ruleset; the release
+          # commit is pushed straight to main.
+          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
