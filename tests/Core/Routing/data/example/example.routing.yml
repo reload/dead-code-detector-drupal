@@ -1,0 +1,4 @@
+example.page:
+  path: /example
+  defaults:
+    _controller: '\Drupal\example\Routing\RouteController::page'

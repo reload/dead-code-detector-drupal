@@ -62,3 +62,18 @@ services:
             originFiles: @drupalDeadCode.originFiles
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.routeDefinitions:
+        class: Reload\DeadCodeDetectorDrupal\Core\Routing\RouteDefinitions
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+            services: @drupalDeadCode.serviceDefinitions
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Routing\RouteUsageProvider
+        arguments:
+            routes: @drupalDeadCode.routeDefinitions
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
