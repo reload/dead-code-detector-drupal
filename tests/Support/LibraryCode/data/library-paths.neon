@@ -1,3 +1,4 @@
+# data/library counts as Composer-installed.
 services:
     drupalDeadCode.libraryPaths:
-        factory: Reload\DeadCodeDetectorDrupal\Tests\Support\LibraryCode\FixtureLibraryPaths::create()
+        factory: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths::fromDirectories({'%rootDir%/../../../tests/Support/LibraryCode/data/library': 'fixture/library'})

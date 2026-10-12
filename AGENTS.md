@@ -17,7 +17,11 @@ before changing behaviour; it records what was decided and why.
   phpstan/extension-installer.
 - `tests/<Bucket>/<Mechanism>/`, mirroring `src/`: unit tests for decisions,
   and rule tests that run shipmonk's `DeadCodeRule` from the PHPStan container
-  over fixtures in `data/`.
+  over fixtures in `data/`. Rule tests with the package's default parameters
+  share one container, `tests/fixtures.neon`, and one analysis; their fixtures
+  live in `Drupal\example\<Mechanism>`, so each test sees only its own. A
+  test needing other parameters names its own neon, with paths from
+  `%rootDir%`, PHPStan's directory.
 - `docs/coverage.md`: Drupal's documented mechanisms mapped to the providers.
   Change it with the code.
 

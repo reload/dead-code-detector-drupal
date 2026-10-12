@@ -10,14 +10,17 @@ final class RouteAttributeUsageProviderTest extends DeadCodeRuleTestCase
 {
     private const CONTROLLER_NAMESPACE = 'Drupal\example\Controller';
 
-    protected static function fixtureConfigFiles(): array
-    {
-        return [__DIR__ . '/data/config.neon'];
-    }
-
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/attribute-routes.php'];
+    }
+
+    /**
+     * Core finds attribute routes in a module's Controller namespace.
+     */
+    protected static function fixtureNamespace(): string
+    {
+        return 'Drupal\example\Controller';
     }
 
     public static function usedMembers(): iterable

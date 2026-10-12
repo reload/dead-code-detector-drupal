@@ -1,5 +1,5 @@
 services:
     drupalDeadCode.testPaths:
-        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureTestPaths::module()
+        factory: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths(['%rootDir%/../../../tests/Core/TestCode/data'])
     drupalDeadCode.drupalFiles:
-        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::testsExcluder()
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/TestCode/data'])

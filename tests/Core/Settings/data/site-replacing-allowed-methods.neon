@@ -1,5 +1,5 @@
 services:
     drupalDeadCode.drupalFiles:
-        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::siteReplacingAllowedMethods()
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/Settings/data/site-replacing-allowed-methods'])
     drupalDeadCode.settingsFiles:
-        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureSettingsFiles::siteReplacingAllowedMethods()
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles::inDrupalRoot('%rootDir%/../../../tests/Core/Settings/data/site-replacing-allowed-methods')

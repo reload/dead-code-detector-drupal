@@ -1,2 +1,0 @@
-# Gives this test class its own PHPStan container.
-parameters: []

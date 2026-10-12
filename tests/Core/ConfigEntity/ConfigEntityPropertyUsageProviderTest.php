@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\ConfigEntity;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\Reflection\ByNameRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class ConfigEntityPropertyUsageProviderTest extends ByNameRuleTestCase
+final class ConfigEntityPropertyUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/config-entities.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\ConfigEntity';
     }
 
     public static function usedMembers(): iterable

@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\Rest;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\Reflection\ByNameRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class RestResourceUsageProviderTest extends ByNameRuleTestCase
+final class RestResourceUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/resources.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\Rest';
     }
 
     public static function usedMembers(): iterable

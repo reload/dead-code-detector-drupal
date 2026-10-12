@@ -8,12 +8,7 @@ use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
 final class ActionMethodUsageProviderTest extends DeadCodeRuleTestCase
 {
-    private const ENTITY_NAMESPACE = 'Drupal\example\Entity';
-
-    protected static function fixtureConfigFiles(): array
-    {
-        return [__DIR__ . '/data/config.neon'];
-    }
+    private const ENTITY_NAMESPACE = 'Drupal\example\ConfigAction';
 
     protected static function fixtureFiles(): array
     {

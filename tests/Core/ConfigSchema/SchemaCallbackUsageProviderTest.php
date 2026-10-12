@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\ConfigSchema;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\DeclaredUsage\WiringRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class SchemaCallbackUsageProviderTest extends WiringRuleTestCase
+final class SchemaCallbackUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/example/src/schema-callbacks.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\ConfigSchema';
     }
 
     public static function usedMembers(): iterable

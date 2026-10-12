@@ -9,27 +9,35 @@ use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionClass;
 use ShipMonk\PHPStan\DeadCode\Rule\DeadCodeRule;
 
 use function array_filter;
 use function array_map;
+use function array_unique;
 use function array_values;
+use function count;
 use function explode;
+use function get_declared_classes;
 use function implode;
+use function is_subclass_of;
 use function preg_match;
 use function preg_quote;
+use function sort;
 use function str_contains;
 use function str_starts_with;
 use function substr;
 
 /**
  * Runs shipmonk's DeadCodeRule as configured by its rules.neon and this
- * package's extension.neon over fixtures, once per analysis, and checks one
- * fixture member per test.
+ * package's extension.neon over fixtures, and checks one fixture member per
+ * test.
  *
- * Shipmonk's rule keeps state between analyses, so classes with the same
- * config and analysed files share one analysis, and each keeps the messages
- * of its own fixture namespace. Otherwise a class gets a container of its own.
+ * Shipmonk's rule keeps state between analyses, so every test class with the
+ * same config files shares one container and one analysis of all their
+ * fixtures. Each class then keeps the messages about its own fixtures, which
+ * live in Drupal\example\<Mechanism>, named after the test's directory. A
+ * class alone with its config files keeps every message.
  *
  * @extends RuleTestCase<DeadCodeRule>
  */
@@ -37,16 +45,20 @@ abstract class DeadCodeRuleTestCase extends RuleTestCase
 {
     /**
      * @var array<string, list<string>>
-     *   Messages keyed by the config and analysed files that produced them.
+     *   Messages keyed by the config files of the container that produced them.
      */
-    private static array $reportedMessagesByAnalysis = [];
+    private static array $reportedMessagesByConfig = [];
 
     /**
-     * At least one file of the test's own, or of its group's.
+     * The config files of the container, shared by every test with the
+     * package's default parameters.
      *
      * @return non-empty-list<string>
      */
-    abstract protected static function fixtureConfigFiles(): array;
+    protected static function fixtureConfigFiles(): array
+    {
+        return [__DIR__ . '/fixtures.neon'];
+    }
 
     /**
      * The fixtures this class checks.
@@ -70,21 +82,13 @@ abstract class DeadCodeRuleTestCase extends RuleTestCase
     abstract public static function deadMemberMessages(): iterable;
 
     /**
-     * The files analysed together: a group's base lists every member's.
-     *
-     * @return non-empty-list<string>
+     * The namespace of this class's fixtures.
      */
-    protected static function analysedFixtureFiles(): array
+    protected static function fixtureNamespace(): string
     {
-        return static::fixtureFiles();
-    }
+        $classNameParts = explode('\\', static::class);
 
-    /**
-     * The namespace of this class's fixtures, when others share the analysis.
-     */
-    protected static function fixtureNamespace(): ?string
-    {
-        return null;
+        return 'Drupal\example\\' . $classNameParts[count($classNameParts) - 2];
     }
 
     #[DataProvider('usedMembers')]
@@ -174,21 +178,61 @@ abstract class DeadCodeRuleTestCase extends RuleTestCase
      */
     private function reportedMessages(): array
     {
-        $analysisKey = implode("\n", [...static::fixtureConfigFiles(), ...static::analysedFixtureFiles()]);
-        $messages = self::$reportedMessagesByAnalysis[$analysisKey] ??= array_map(
+        $configFiles = static::fixtureConfigFiles();
+        $sharingClasses = self::classesConfiguredBy($configFiles);
+        $messages = self::$reportedMessagesByConfig[implode("\n", $configFiles)] ??= array_map(
             static fn (Error $error): string => $error->getMessage(),
-            $this->gatherAnalyserErrors(static::analysedFixtureFiles()),
+            $this->gatherAnalyserErrors(self::fixtureFilesOf($sharingClasses)),
         );
-
-        $namespace = static::fixtureNamespace();
-        if ($namespace === null) {
+        if (count($sharingClasses) === 1) {
             return $messages;
         }
 
         // Messages name the member after a space: "Unused Ns\Class::member".
+        $namespace = static::fixtureNamespace();
+
         return array_values(array_filter(
             $messages,
             static fn (string $message): bool => str_contains($message, ' ' . $namespace . '\\'),
         ));
+    }
+
+    /**
+     * The test classes PHPUnit has loaded that share these config files,
+     * this one included. Loaded, so running one test file analyses only its
+     * own fixtures.
+     *
+     * @param non-empty-list<string> $configFiles
+     * @return non-empty-list<class-string<self>>
+     */
+    private static function classesConfiguredBy(array $configFiles): array
+    {
+        $classes = [];
+        foreach (get_declared_classes() as $class) {
+            if (
+                is_subclass_of($class, self::class)
+                && !(new ReflectionClass($class))->isAbstract()
+                && $class::fixtureConfigFiles() === $configFiles
+            ) {
+                $classes[] = $class;
+            }
+        }
+        sort($classes);
+
+        return $classes === [] ? [static::class] : $classes;
+    }
+
+    /**
+     * @param non-empty-list<class-string<self>> $classes
+     * @return list<string>
+     */
+    private static function fixtureFilesOf(array $classes): array
+    {
+        $files = [];
+        foreach ($classes as $class) {
+            $files = [...$files, ...$class::fixtureFiles()];
+        }
+
+        return array_values(array_unique($files));
     }
 }

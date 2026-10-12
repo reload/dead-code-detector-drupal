@@ -1,0 +1,12 @@
+# One container for every rule test with the package's default parameters,
+# reading the wiring of the fixture modules. PHPStan's rootDir is
+# vendor/phpstan/phpstan; neon cannot name a test's own directory.
+services:
+    drupalDeadCode.drupalFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles([
+            '%rootDir%/../../../tests/Core/Services/data',
+            '%rootDir%/../../../tests/Core/Routing/data',
+            '%rootDir%/../../../tests/Core/ConfigSchema/data',
+            '%rootDir%/../../../tests/Core/Permission/data',
+            '%rootDir%/../../../tests/Core/Callable/data',
+        ])

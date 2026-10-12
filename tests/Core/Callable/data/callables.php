@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\example;
+namespace Drupal\example\Callable;
 
 function build_form(): array
 {
@@ -20,12 +20,12 @@ final class FormWithStringCallbacks
     {
         return [
             '#submit' => ['::calledByFormObjectString'],
-            '#validate' => ['\Drupal\example\CallbackTarget::calledByClassString'],
+            '#validate' => ['\Drupal\example\Callable\CallbackTarget::calledByClassString'],
             '#pre_render' => ['example.callable_service:calledByServiceString'],
             '#after_build' => [static::class . ':calledByStaticClassConcatenation'],
             '#process' => ['undeclared.service:namedOnlyThroughUndeclaredService'],
-            '#element_validate' => ['Drupal\example\InstantiatedCallbackHolder:calledBySingleColonLiteral'],
-            '#post_render' => ['\Drupal\example\CallbackTarget::noSuchMethod'],
+            '#element_validate' => ['Drupal\example\Callable\InstantiatedCallbackHolder:calledBySingleColonLiteral'],
+            '#post_render' => ['\Drupal\example\Callable\CallbackTarget::noSuchMethod'],
         ];
     }
 

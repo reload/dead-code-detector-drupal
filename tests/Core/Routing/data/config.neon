@@ -1,8 +1,0 @@
-# Gives this test class its own PHPStan container. DCD's Symfony provider keeps
-# the fixtures' #[Route] methods alive, so it is switched on rather than left to
-# detect symfony/* in this checkout's vendor/.
-parameters:
-    shipmonkDeadCode:
-        usageProviders:
-            symfony:
-                enabled: true

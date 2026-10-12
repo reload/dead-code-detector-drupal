@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Contrib\JsonApi;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\Reflection\ByNameRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class JsonApiResourceUsageProviderTest extends ByNameRuleTestCase
+final class JsonApiResourceUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/resources.php', __DIR__ . '/data/stubs.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\JsonApi';
     }
 
     public static function usedMembers(): iterable

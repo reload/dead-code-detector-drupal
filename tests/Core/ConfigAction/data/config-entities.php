@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\example\Entity;
+namespace Drupal\example\ConfigAction;
 
 use Drupal\Core\Config\Action\Attribute\ActionMethod;
 use Drupal\Core\Config\Entity\ConfigEntityBase;

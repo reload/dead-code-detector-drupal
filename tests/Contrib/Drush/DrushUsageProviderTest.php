@@ -10,11 +10,6 @@ final class DrushUsageProviderTest extends DeadCodeRuleTestCase
 {
     private const COMMANDS = 'Drupal\example\Drush\Commands\DrushCommandsSubclass';
 
-    protected static function fixtureConfigFiles(): array
-    {
-        return [__DIR__ . '/data/config.neon'];
-    }
-
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/commands.php'];

@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\Access;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\Reflection\ByNameRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class AccessCheckerUsageProviderTest extends ByNameRuleTestCase
+final class AccessCheckerUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/access-checkers.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\Access';
     }
 
     public static function usedMembers(): iterable

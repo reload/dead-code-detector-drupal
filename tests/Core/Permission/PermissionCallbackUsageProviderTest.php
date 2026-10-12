@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\Permission;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\DeclaredUsage\WiringRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class PermissionCallbackUsageProviderTest extends WiringRuleTestCase
+final class PermissionCallbackUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/example/src/permission-callbacks.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\Permission';
     }
 
     public static function usedMembers(): iterable

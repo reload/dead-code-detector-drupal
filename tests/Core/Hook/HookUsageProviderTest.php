@@ -8,11 +8,6 @@ use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
 final class HookUsageProviderTest extends DeadCodeRuleTestCase
 {
-    protected static function fixtureConfigFiles(): array
-    {
-        return [__DIR__ . '/data/config.neon'];
-    }
-
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/hooks.php'];

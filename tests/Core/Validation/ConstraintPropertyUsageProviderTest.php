@@ -4,18 +4,13 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Tests\Core\Validation;
 
-use Reload\DeadCodeDetectorDrupal\Tests\Support\Reflection\ByNameRuleTestCase;
+use Reload\DeadCodeDetectorDrupal\Tests\DeadCodeRuleTestCase;
 
-final class ConstraintPropertyUsageProviderTest extends ByNameRuleTestCase
+final class ConstraintPropertyUsageProviderTest extends DeadCodeRuleTestCase
 {
     protected static function fixtureFiles(): array
     {
         return [__DIR__ . '/data/constraints.php'];
-    }
-
-    protected static function fixtureNamespace(): string
-    {
-        return 'Drupal\example\Validation';
     }
 
     public static function usedMembers(): iterable

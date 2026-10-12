@@ -269,10 +269,10 @@ the measurement, the decision and how it came about.
 - **Configuration.** Parameters live under `drupalDeadCode`. They are a
   published contract; see the [README](../README.md#configuration).
 - **Rule tests.** DCD's rule keeps state between analyses, so each analysis
-  runs once: a test class gets a container of its own, or a group of classes
-  shares one analysis and each keeps the messages of its own fixture
-  namespace, as the by-name providers do. A class then checks one member per
-  test. The container boots phpstan-drupal on the Drupal core
+  runs once: every test class with the same config files shares one container
+  and one analysis of all their fixtures, and keeps the messages about its own,
+  which live in `Drupal\example\<Mechanism>`. A class then checks one member
+  per test. The container boots phpstan-drupal on the Drupal core
   installed for development, so fixtures build on core's real classes and are
   typed as on a site. Only contrib and Drush classes are stubbed.
 
