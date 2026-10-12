@@ -23,8 +23,11 @@ abstract class ByNameRuleTestCase extends DeadCodeRuleTestCase
 
         return [
             $tests . '/Core/Access/data/access-checkers.php',
+            $tests . '/Core/ConfigEntity/data/config-entities.php',
             $tests . '/Core/EventSubscriber/data/exception-subscribers.php',
+            $tests . '/Core/Plugin/data/attributes.php',
             $tests . '/Core/Rest/data/resources.php',
+            $tests . '/Core/Validation/data/constraints.php',
             $tests . '/Contrib/GraphQl/data/data-producers.php',
             $tests . '/Contrib/GraphQl/data/stubs.php',
             $tests . '/Contrib/JsonApi/data/resources.php',

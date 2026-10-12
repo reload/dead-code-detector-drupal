@@ -153,3 +153,18 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\EventSubscriber\HttpExceptionHandlerUsageProvider
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\ConfigEntity\ConfigEntityPropertyUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Plugin\PluginAttributePropertyUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Validation\ConstraintPropertyUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
