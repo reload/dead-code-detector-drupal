@@ -96,3 +96,18 @@ services:
             originFiles: @drupalDeadCode.originFiles
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.permissionCallbacks:
+        class: Reload\DeadCodeDetectorDrupal\Core\Permission\PermissionCallbacks
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+            services: @drupalDeadCode.serviceDefinitions
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Permission\PermissionCallbackUsageProvider
+        arguments:
+            callbacks: @drupalDeadCode.permissionCallbacks
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
