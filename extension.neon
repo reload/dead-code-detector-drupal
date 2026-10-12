@@ -116,3 +116,8 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\Hook\HookUsageProvider
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\ConfigAction\ActionMethodUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
