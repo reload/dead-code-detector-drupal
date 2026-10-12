@@ -57,10 +57,13 @@ lint-markdown: ## Lint Markdown files, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/workdir davidanson/markdownlint-cli2:v0.18.1 \
 		$(shell git ls-files --cached --others --exclude-standard '*.md' ':!:CHANGELOG.md')
 
-# Conventional Commits, which the release workflow reads to pick the version.
+# Conventional Commits, which the release workflow reads to pick the version. The
+# checkout belongs to another user than the container's, which git refuses unless told.
 BASE ?= origin/main
 lint-commits: ## Lint the commit messages since BASE (origin/main), like the CI "Lint" workflow does.
-	@docker run --rm -v "$(CURDIR)":/app -w /app commitlint/commitlint:21.2.3 --from "$(BASE)" --to HEAD --verbose
+	@docker run --rm -v "$(CURDIR)":/app -w /app \
+		-e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/app \
+		commitlint/commitlint:21.2.3 --from "$(BASE)" --to HEAD --verbose
 
 # GITHUB_ACTIONS/GITHUB_WORKFLOW are forwarded so yamllint's "auto" format emits
 # inline annotations in CI; both are unset locally, so output stays readable.
