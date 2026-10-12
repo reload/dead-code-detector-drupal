@@ -53,8 +53,12 @@ Always use the make targets, and run the checks for every area you touch.
   official image ships a coverage driver and the host PHP may lack one.
   Infection mutates the decision classes, those carrying `@phpstan-pure`, and
   fails on any covered mutant the tests miss; `infection.json5` lists the
-  mutants ignored, each with its reason.
-  `MUTATE="src/Core/Hook/HookMethods.php"` limits a run to files. Neither
-  target is part of `make checks`.
+  mutants ignored, each with its reason. Keep that scope: readers and
+  providers are reached only through rule tests sharing one analysis, so
+  Infection cannot tell which test observes a mutant there and reports false
+  escapes. `MUTATE="src/Core/Hook/HookMethods.php"` limits a run to files.
+  The CI "PHP" workflow runs the mutation target on the runner's own PHP with
+  `IN_DOCKER=`, so Infection's annotations reach the files. Neither target is
+  part of `make checks`.
 
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector

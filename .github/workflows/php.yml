@@ -50,3 +50,23 @@ jobs:
 
       - name: Run PHPUnit
         run: make test-php
+
+  mutation:
+    name: Mutation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP, with composer and pcov
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      # On the runner's own PHP, so Infection's annotations point at the files.
+      - name: Mutation-test the decision classes
+        run: make test-mutation IN_DOCKER=

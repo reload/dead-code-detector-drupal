@@ -15,22 +15,27 @@ test-php: vendor ## Run PHP tests (PHPUnit).
 	vendor/bin/phpunit
 
 # No official PHP image ships a coverage driver, and the host PHP may lack one
-# too, so the Docker targets run in the image Dockerfile builds from it.
+# too, so the Docker targets run in the image Dockerfile builds from it. On a
+# PHP that has a driver, such as CI's, IN_DOCKER= runs them on the host instead.
 PHP_IMAGE = dead-code-detector-drupal/php
 IN_PHP_IMAGE = docker run --rm -v "$(CURDIR)":/app -w /app $(PHP_IMAGE)
+IN_DOCKER ?= yes
+PHP_RUNNER = $(if $(IN_DOCKER),$(IN_PHP_IMAGE))
+IMAGE_IF_USED = $(if $(IN_DOCKER),php-image)
 
 php-image: ## Build the image the Docker targets run in (see Dockerfile).
 	@docker build --quiet --tag $(PHP_IMAGE) - < Dockerfile >/dev/null
 
-test-coverage: vendor php-image ## Measure test coverage of src (PHPUnit with pcov, in Docker).
-	$(IN_PHP_IMAGE) vendor/bin/phpunit --coverage-text
+test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit with pcov, in Docker).
+	$(PHP_RUNNER) vendor/bin/phpunit --coverage-text
 
-# The decision classes; readers and providers are only reached through rule tests.
+# The decision classes. Readers and providers are reached only through rule tests
+# sharing one analysis, so Infection cannot tell which test observes a mutant there.
 MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
 
 # One thread: concurrent rule tests collide in shipmonk's usage cache under /tmp.
-test-mutation: vendor php-image ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
-	$(IN_PHP_IMAGE) vendor/bin/infection --threads=1 --show-mutations=max --no-progress $(MUTATE)
+test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
+	$(PHP_RUNNER) vendor/bin/infection --threads=1 --show-mutations=max --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).
 	vendor/bin/phpcbf
