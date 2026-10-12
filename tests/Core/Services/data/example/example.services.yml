@@ -1,0 +1,5 @@
+services:
+  example.service_with_inherited_setter:
+    class: Drupal\example\Services\ServiceWithInheritedSetter
+    calls:
+      - [setFromParent, []]

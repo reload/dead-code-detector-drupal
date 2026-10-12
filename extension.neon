@@ -44,3 +44,21 @@ services:
             libraryPaths: @drupalDeadCode.libraryPaths
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.originFiles:
+        class: Reload\DeadCodeDetectorDrupal\Support\Usage\OriginFiles
+        autowired: false
+
+    drupalDeadCode.serviceDefinitions:
+        class: Reload\DeadCodeDetectorDrupal\Core\Services\ServiceDefinitions
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Services\ServiceUsageProvider
+        arguments:
+            services: @drupalDeadCode.serviceDefinitions
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageProvider

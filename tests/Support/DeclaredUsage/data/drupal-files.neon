@@ -1,0 +1,3 @@
+services:
+    drupalDeadCode.drupalFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::declaredUsage()
