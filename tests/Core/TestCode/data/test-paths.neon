@@ -2,4 +2,4 @@ services:
     drupalDeadCode.testPaths:
         factory: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths(['%rootDir%/../../../tests/Core/TestCode/data'])
     drupalDeadCode.drupalFiles:
-        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/TestCode/data'])
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/TestCode/data'], Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter([]))

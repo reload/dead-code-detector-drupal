@@ -1,3 +1,3 @@
 services:
     drupalDeadCode.drupalFiles:
-        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/Twig/data/templates'])
+        factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/Twig/data/templates'], Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter([]))

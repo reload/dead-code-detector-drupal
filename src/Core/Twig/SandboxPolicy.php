@@ -9,7 +9,6 @@ use Drupal\Core\Template\Attribute\TwigAllowed;
 use ReflectionClass;
 use ReflectionMethod;
 use Reload\DeadCodeDetectorDrupal\Support\Reflection\ClassAncestry;
-use Twig\Extra\Html\Cva;
 
 use function array_intersect;
 use function in_array;
@@ -28,9 +27,10 @@ final class SandboxPolicy
     public const ALLOWED_PREFIXES_SETTING = 'twig_sandbox_allowed_prefixes';
 
     /**
-     * TwigSandboxPolicy's defaults, for settings a site does not set.
+     * TwigSandboxPolicy's defaults, for settings a site does not set. Cva by
+     * name: core requires twig/html-extra only since 11.4.
      */
-    private const DEFAULT_ALLOWED_CLASSES = [TemplateAttribute::class, Cva::class];
+    private const DEFAULT_ALLOWED_CLASSES = [TemplateAttribute::class, 'Twig\Extra\Html\Cva'];
     private const DEFAULT_ALLOWED_METHODS = ['id', 'label', 'bundle', 'get', '__toString', 'toString'];
     private const DEFAULT_ALLOWED_PREFIXES = ['get', 'has', 'is'];
 

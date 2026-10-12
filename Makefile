@@ -9,7 +9,7 @@ lint-php: vendor ## Lint PHP code (PHPCS).
 	vendor/bin/phpcs
 
 analyse-php: vendor ## Analyse PHP code (PHPStan).
-	vendor/bin/phpstan analyse --no-progress
+	vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
 test-php: vendor ## Run PHP tests (PHPUnit).
 	vendor/bin/phpunit

@@ -9,4 +9,4 @@ services:
             '%rootDir%/../../../tests/Core/ConfigSchema/data',
             '%rootDir%/../../../tests/Core/Permission/data',
             '%rootDir%/../../../tests/Core/Callable/data',
-        ])
+        ], Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter([]))
