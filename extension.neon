@@ -77,3 +77,8 @@ services:
             originFiles: @drupalDeadCode.originFiles
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Routing\RouteAttributeUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
