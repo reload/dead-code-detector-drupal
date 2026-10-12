@@ -1,0 +1,14 @@
+---
+
+extends: default
+
+ignore-from-file:
+  - .gitignore
+  - .yamlignore
+
+rules:
+  indentation:
+    spaces: 2
+  line-length: disable
+  truthy:
+    check-keys: false

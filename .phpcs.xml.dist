@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="dead-code-detector-drupal">
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <file>src</file>
+    <file>tests</file>
+
+    <!-- Fixtures are analysed by PHPStan, not maintained as code; several hold more than one class. -->
+    <exclude-pattern>tests/*/data/*</exclude-pattern>
+
+    <rule ref="PSR12"/>
+</ruleset>

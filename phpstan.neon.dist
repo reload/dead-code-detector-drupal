@@ -1,0 +1,26 @@
+includes:
+    # Boots Drupal core from vendor/, so core modules' classes resolve.
+    - vendor/mglaman/phpstan-drupal/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/shipmonk/phpstan-rules/rules.neon
+    - vendor/phpat/phpat/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    excludePaths:
+        - tests/*/data/*
+    shipmonkRules:
+        classSuffixNaming:
+            superclassToSuffixMapping:
+                ShipMonk\PHPStan\DeadCode\Provider\MemberUsageProvider: UsageProvider
+                ShipMonk\PHPStan\DeadCode\Excluder\MemberUsageExcluder: Excluder
+
+services:
+    -
+        class: Reload\DeadCodeDetectorDrupal\Tests\Architecture\Layers
+        tags:
+            - phpat.test

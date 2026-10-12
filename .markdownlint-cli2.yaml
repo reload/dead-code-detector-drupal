@@ -1,0 +1,7 @@
+---
+# Files to lint are passed by `make lint-markdown`.
+
+config:
+  MD013:
+    code_blocks: false
+    tables: false

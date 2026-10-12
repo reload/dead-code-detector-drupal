@@ -1,0 +1,2 @@
+# Fixtures mimic Drupal YAML, which has no document start.
+/tests/*/*/data/

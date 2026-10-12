@@ -1,0 +1,52 @@
+---
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+name: PHP
+
+permissions:
+  contents: read
+
+# Detect if this action is already running, and cancel it.
+# This most likely happened because a second push has been made to a branch.
+concurrency:
+  group: ${{ github.repository_id }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php:
+          - '8.3'
+          - '8.4'
+          - '8.5'
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup PHP, with composer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          coverage: none
+
+      - name: Validate composer.json
+        run: make validate-composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Run phpcs
+        run: make lint-php
+
+      - name: Run PHPStan
+        run: make analyse-php
+
+      - name: Run PHPUnit
+        run: make test-php
