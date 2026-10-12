@@ -321,20 +321,13 @@ when the mechanism belongs in this package instead.
 
 ## Debugging
 
-To see why a member counts as used, or does not, ask dead-code-detector:
+To see why a member counts as used, or does not, use dead-code-detector's
+[debugging][dcd-debugging]: list the member under
+`shipmonkDeadCode.debug.usagesOf` and run PHPStan with `-vvv`. The note of
+the provider that marked it is printed with each usage.
 
-```neon
-parameters:
-    shipmonkDeadCode:
-        debug:
-            usagesOf:
-                - Drupal\example_module\Importer::import
-```
-
-Run PHPStan with `-vvv` and every usage of that member is printed with its
-origin or the note of the provider that marked it. Changing this list does not
-invalidate the result cache; changing a provider's code does not invalidate
-it either, so run `phpstan clear-result-cache` after editing one.
+Changing a provider's code does not invalidate PHPStan's result cache, so run
+`phpstan clear-result-cache` after editing one.
 
 ## Documentation
 
@@ -374,6 +367,7 @@ MIT, see [LICENSE](LICENSE).
 [canvas]: docs/measurements/canvas.md
 [conventional-commits]: https://www.conventionalcommits.org/
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector
+[dcd-debugging]: https://github.com/shipmonk-rnd/dead-code-detector#debugging
 [dpl-web]: docs/measurements/dpl-web.md
 [extension-installer]: https://github.com/phpstan/extension-installer
 [phpstan-drupal]: https://github.com/mglaman/phpstan-drupal

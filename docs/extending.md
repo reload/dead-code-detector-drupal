@@ -142,23 +142,14 @@ services:
 
 ## Checking that it works
 
-Ask dead-code-detector how it evaluated a member you expect to be alive:
+Use dead-code-detector's [debugging][dcd-debugging]: list a member you expect
+to be alive under `shipmonkDeadCode.debug.usagesOf`, run PHPStan with `-vvv`,
+and the provider's note shows up on the usage when it fired.
 
-```neon
-parameters:
-    shipmonkDeadCode:
-        debug:
-            usagesOf:
-                - Drupal\my_module\Widget\HeroWidget::build
-```
-
-Run PHPStan with `-vvv` and it prints every usage of that member with its
-origin or note, so the provider's note shows up when it fired. Changing this
-list does not invalidate the result cache.
-
-Changing the provider's code does not invalidate it either: PHPStan tracks
-the analysed files and its configuration, not the classes its services are
-built from. Run `phpstan clear-result-cache` after editing a provider.
+Changing the provider's code does not invalidate PHPStan's result cache:
+PHPStan tracks the analysed files and its configuration, not the classes its
+services are built from. Run `phpstan clear-result-cache` after editing a
+provider.
 
 ## When it belongs in this package
 
@@ -180,3 +171,5 @@ provider. Two kinds of mechanism cannot be done well from a site:
 [AGENTS.md](../AGENTS.md) lists what a provider in this package needs: a
 directory per mechanism, documentation references, a coverage row, and tests
 named after the cases they prove.
+
+[dcd-debugging]: https://github.com/shipmonk-rnd/dead-code-detector#debugging
