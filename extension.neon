@@ -173,3 +173,30 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Contrib\Drush\DrushUsageProvider
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.settingLists:
+        class: Reload\DeadCodeDetectorDrupal\Core\Settings\SettingLists
+        arguments:
+            settingsFiles: @drupalDeadCode.settingsFiles
+        autowired: false
+
+    drupalDeadCode.templates:
+        class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigTemplates
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+        autowired: false
+
+    drupalDeadCode.twigSandbox:
+        class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigSandbox
+        arguments:
+            settingLists: @drupalDeadCode.settingLists
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigUsageProvider
+        arguments:
+            templates: @drupalDeadCode.templates
+            sandbox: @drupalDeadCode.twigSandbox
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageProvider

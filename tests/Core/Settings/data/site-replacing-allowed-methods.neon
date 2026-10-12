@@ -1,0 +1,5 @@
+services:
+    drupalDeadCode.drupalFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::siteReplacingAllowedMethods()
+    drupalDeadCode.settingsFiles:
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureSettingsFiles::siteReplacingAllowedMethods()

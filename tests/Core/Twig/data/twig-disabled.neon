@@ -1,0 +1,4 @@
+parameters:
+    drupalDeadCode:
+        twigTemplates:
+            enabled: false

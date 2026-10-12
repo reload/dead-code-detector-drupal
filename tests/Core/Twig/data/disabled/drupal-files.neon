@@ -1,0 +1,4 @@
+services:
+    drupalDeadCode.drupalFiles:
+        # The parameter, as extension.neon passes it, so the switch reaches discovery.
+        factory: Reload\DeadCodeDetectorDrupal\Tests\FixtureDrupalFiles::twigDisabled(%drupalDeadCode.twigTemplates.enabled%)
