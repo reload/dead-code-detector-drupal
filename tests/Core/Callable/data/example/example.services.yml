@@ -1,0 +1,3 @@
+services:
+  example.callable_service:
+    class: Drupal\example\CallableService
