@@ -82,3 +82,17 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\Routing\RouteAttributeUsageProvider
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    drupalDeadCode.schemaCallbacks:
+        class: Reload\DeadCodeDetectorDrupal\Core\ConfigSchema\SchemaCallbacks
+        arguments:
+            drupalFiles: @drupalDeadCode.drupalFiles
+        autowired: false
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\ConfigSchema\SchemaCallbackUsageProvider
+        arguments:
+            callbacks: @drupalDeadCode.schemaCallbacks
+            originFiles: @drupalDeadCode.originFiles
+        tags:
+            - shipmonk.deadCode.memberUsageProvider

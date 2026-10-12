@@ -24,6 +24,7 @@ abstract class WiringRuleTestCase extends DeadCodeRuleTestCase
         return [
             $tests . '/Core/Services/data/example/src/services.php',
             $tests . '/Core/Routing/data/example/src/routes.php',
+            $tests . '/Core/ConfigSchema/data/example/src/schema-callbacks.php',
         ];
     }
 }
