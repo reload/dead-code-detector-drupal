@@ -1,8 +1,27 @@
 # AGENTS.md
 
 A PHPStan extension: Drupal usage providers for
-[shipmonk/dead-code-detector][dcd]. Read [docs/design.md](docs/design.md)
-before changing behaviour; it records what was decided and why.
+[shipmonk/dead-code-detector][dcd]. The [README](README.md) says what it
+does for users; [docs/design.md](docs/design.md) records what was decided and
+why. Read the design before changing behaviour.
+
+## Documentation
+
+- `README.md`: installation, what counts as used, configuration, limitations,
+  and the short form of writing a provider.
+- `docs/design.md`: the decisions and their reasons. Change it when a
+  decision changes, not for every commit.
+- `docs/coverage.md`: Drupal's documented mechanisms mapped to the providers,
+  with what is not covered. Change it with the code.
+- `docs/extending.md`: how a site writes its own provider, and when a
+  mechanism belongs here instead.
+- `docs/twig.md`: Twig name matching, its limits and the measurement behind
+  it.
+- `docs/related-work.md` and `docs/measurements/`: context and evidence; they
+  describe a point in time and say which. Only public corpora are named;
+  client projects stay out of the documentation.
+
+Verify every URL before writing it down, with a request, not from memory.
 
 ## Architecture
 
@@ -11,10 +30,12 @@ before changing behaviour; it records what was decided and why.
   needs. `Core` is Drupal core, `Contrib` is contrib modules and Drush, one
   module at a time.
 - `src/Support/`: code tied to no Drupal API: wiring and settings file
-  discovery, YAML reading, usage origins, declared-usage and reflection bases,
-  and the Composer library-code rule.
+  discovery, YAML reading, usage origins, the declared-usage and
+  calls-by-name bases, and the Composer library-code rule. The two
+  calls-by-name bases are also the extension points sites build on.
 - `extension.neon`: service wiring. Users load it through
-  phpstan/extension-installer.
+  phpstan/extension-installer. Its two parameters are the whole
+  configuration; see the design for why there is no more.
 - `tests/<Bucket>/<Mechanism>/`, mirroring `src/`: unit tests for decisions,
   and rule tests that run shipmonk's `DeadCodeRule` from the PHPStan container
   over fixtures in `data/`. Rule tests with the package's default parameters
@@ -22,24 +43,35 @@ before changing behaviour; it records what was decided and why.
   live in `Drupal\example\<Mechanism>`, so each test sees only its own. A
   test needing other parameters names its own neon, with paths from
   `%rootDir%`, PHPStan's directory.
-- `docs/coverage.md`: Drupal's documented mechanisms mapped to the providers.
-  Change it with the code.
 
 ## Conventions
 
 - Keep reading the world separate from deciding about it. A reader is a
-  service the container builds from its sources and injects; it reads once, on
-  first use. A decision is a static function of data, `parse()` included, and
-  carries `@phpstan-pure`, which PHPStan checks. Nothing static reads the world,
-  and unit tests must not need the filesystem.
-- `tests/Architecture` holds the phpat rules PHPStan runs: `Support` depends on
-  no Drupal area, `Contrib` builds on `Support` alone, and readers are built by
-  the container only. shipmonk's rules name providers `*UsageProvider` and
-  excluders `*Excluder`.
+  service the container builds from its sources and injects; it reads once,
+  on first use. A decision is a static function of data, `parse()` included,
+  and carries `@phpstan-pure`, which PHPStan checks. Nothing static reads the
+  world, and unit tests must not need the filesystem.
+- `tests/Architecture` holds the phpat rules PHPStan runs: `Support` depends
+  on no Drupal area, `Contrib` builds on `Support` alone, and readers are
+  built by the container only. shipmonk's rules name providers
+  `*UsageProvider` and excluders `*Excluder`.
 - Name fixture classes and members after the case they prove.
 - phpstan-drupal is a dependency for how it analyses Drupal code; do not
   build on its static maps. Use shipmonk only through its documented
   extension points. See [design](docs/design.md#cross-cutting).
+
+## Adding a provider
+
+1. One directory per mechanism, under `Core` or `Contrib`. The provider
+   carries `@see` tags naming the core or module class that makes the call
+   and the drupal.org page or change record that documents it.
+2. Wiring files get a reader and a static `parse()`; conventions get a
+   reflection-based provider, on the calls-by-name bases where they fit.
+3. Register it in `extension.neon`, readers with `autowired: false`.
+4. Tests: unit tests for the decision, and a rule test with fixtures in
+   `Drupal\example\<Mechanism>` added to `tests/fixtures.neon`. A fixture
+   class in a classmap-loaded file needs `composer dump-autoload`.
+5. Add the row to `docs/coverage.md` and the mechanism to the README's list.
 
 ## Commands
 
