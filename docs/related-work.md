@@ -23,8 +23,8 @@ DCD does the analysis.
 - Its built-in Symfony, Twig and PHPUnit providers, which switch on in any
   Drupal site.
 - The library-code provider generalises DCD's `VendorUsageProvider` from the
-  vendor directory to every Composer install path. See
-  [design](design.md#library-code).
+  vendor directory to every Composer install path. See the
+  [README](../README.md#what-counts-as-used).
 - Code copied from it is credited to it.
 
 **Upstream:** DCD's README admits built-in support for frameworks. At the end
@@ -104,7 +104,7 @@ Before that, its providers overlapped with this package only in part:
 - Knowledge: its mechanism catalogue and its pitfalls. Those include stale
   results from the result cache, and an untyped `new $class()` that keeps
   every constructor alive.
-- Its triaged findings, as a [benchmark](design.md#spike).
+- Its triaged findings, as a [benchmark](measurements/canvas.md).
 - No code. Copying it would make this package GPL and close the upstream route
   into MIT-licensed DCD.
 

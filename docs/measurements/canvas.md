@@ -3,7 +3,7 @@
 This benchmark runs the package against [Drupal Canvas][canvas]. Canvas's
 maintainers already triaged every dead-code finding when they adopted
 shipmonk/dead-code-detector ([#3589128][canvas-adoption]), so their decisions
-serve as labels. See the [spike plan](../design.md#spike).
+serve as labels.
 
 **Result**:
 

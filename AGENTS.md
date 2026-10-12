@@ -2,15 +2,13 @@
 
 A PHPStan extension: Drupal usage providers for
 [shipmonk/dead-code-detector][dcd]. The [README](README.md) says what it
-does for users; [docs/design.md](docs/design.md) records what was decided and
-why. Read the design before changing behaviour.
+does for users and why it works the way it does; this file is for changing
+it.
 
 ## Documentation
 
 - `README.md`: installation, what counts as used, configuration, limitations,
   and the short form of writing a provider.
-- `docs/design.md`: the decisions and their reasons. Change it when a
-  decision changes, not for every commit.
 - `docs/coverage.md`: Drupal's documented mechanisms mapped to the providers,
   with what is not covered. Change it with the code.
 - `docs/extending.md`: how a site writes its own provider, and when a
@@ -58,7 +56,30 @@ Verify every URL before writing it down, with a request, not from memory.
 - Name fixture classes and members after the case they prove.
 - phpstan-drupal is a dependency for how it analyses Drupal code; do not
   build on its static maps. Use shipmonk only through its documented
-  extension points. See [design](docs/design.md#cross-cutting).
+  extension points.
+
+## Cross-cutting
+
+- **Result cache.** `DrupalFilesResultCacheMetaExtension` hashes every wiring
+  and settings file the readers read, and each wiring file's path within the
+  analysed tree, which the tests excluder depends on. Paths within the tree
+  let the cache survive the checkout moving. PHPStan's result cache does not
+  notice code changes in this package when a site installs it from a Composer
+  `path` repository; clear it when developing against a site.
+- **Discovery.** Wiring files are found under PHPStan's analysed paths minus
+  its excluded paths, skipping `node_modules`, `vendor` and `.git`.
+- **phpstan-drupal's maps are not used.** Its `ServiceMap` drops calls, tags,
+  factories, configurators and the file a service came from, and its
+  `ExtensionMap` ignores the analysed and excluded paths. Both are static
+  state filled at bootstrap and due to change. Not building on them also
+  keeps an upstream move possible.
+- **Calls by name.** Each mechanism that calls members by name on subtypes
+  has a provider of its own, as each framework does in shipmonk, so it can be
+  as precise as the mechanism allows. They come from concrete findings: REST
+  resources' HTTP methods and GraphQL data producers' `resolve()` on dpl-web;
+  access checkers' `access()`, config entity properties, plugin attribute
+  properties and constraint properties on Canvas; JSON:API resources'
+  `process()` elsewhere.
 
 ## Adding a provider
 

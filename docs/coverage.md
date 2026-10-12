@@ -2,8 +2,8 @@
 
 How Drupal's developer documentation says Drupal calls custom code, mechanism
 by mechanism, and what covers each one: a provider of this package, shipmonk
-itself, or nothing yet. The [design](design.md) explains the providers; this
-page is the map from the documentation to them.
+itself, or nothing yet. The [README](../README.md) explains what the
+providers do; this page is the map from the documentation to them.
 
 Use it when the documentation changes, a Drupal release adds a mechanism, or a
 finding turns out to be a false positive: find the row, and change the row
@@ -20,9 +20,9 @@ How to read the tables:
 - **Shape**: the documented code, as a developer writes it.
 - **Reaches**: the member Drupal calls or reads, and how.
 - **Covered by**: a class of this package, a shipmonk built-in, or the
-  [library-code rule](design.md#library-code) when the member overrides a
-  declaration in core or contrib. *Not reported* means shipmonk never reports
-  that kind of member, so there is nothing to cover.
+  [library-code rule](../README.md#what-counts-as-used) when the member
+  overrides a declaration in core or contrib. *Not reported* means shipmonk
+  never reports that kind of member, so there is nothing to cover.
 - **Tests**: the directory under `tests/` with the fixtures.
 
 ## Services and dependency injection
@@ -144,6 +144,22 @@ How to read the tables:
 | `$modules`, `$defaultTheme`, `$profile`, `$strictConfigSchema` | read by the base class | library rule | |
 | usages in `tests` directories | do not keep production code alive | `Core\TestCode\TestsUsageExcluder` | `Core/TestCode` |
 
+## Attributes that do not count
+
+An attribute keeps code alive only when Drupal calls the code because of it.
+Core's `#[TrustedCallback]` and `#[TwigAllowed]` only allow a call,
+`#[JsonSchema]` describes a return value, and `#[ReorderHook]` and
+`#[RemoveHook]` act on other implementations, so none of them count.
+
+Contrib attributes are supported one module at a time. On 2026-10-04, 299
+distinct contrib modules were scanned: those installed in the measured sites,
+and 191 widely used or attribute-heavy modules from drupal.org. Only two have
+attributes that make Drupal call the method they are on: Hux, which offered
+OOP hooks before core did and is supported, and Pinto, which builds theme
+definitions from `#[ThemeDefinition]` methods and is not, since no measured
+project uses it. For a module this package does not know, a site can use
+`@api`, `ignoreErrors` or its own usage provider.
+
 ## Not covered
 
 The rows marked **not covered**, in order of what they cost:
@@ -162,9 +178,14 @@ The rows marked **not covered**, in order of what they cost:
    exported field config, and the `ClassResolver` schema constraint. The PHP
    forms are covered.
 4. **Derivers built with `new $class(...)`** and a constructor of their own.
+5. **Form routes from `#[Route]`**, once core releases them
+   ([#3584793][form-routes]): forms in a module's `Form` namespace found by a
+   class-level `#[Route]`, whose constructors need the treatment controllers
+   get.
 
 Callers outside Drupal's wiring, such as Symfony's serializer and
-graphql-php, are [known limitations](design.md#callers-outside-drupals-wiring).
+graphql-php, are [known limitations](../README.md#callers-outside-drupals-wiring).
 
 [docs]: https://www.drupal.org/docs/drupal-apis
+[form-routes]: https://www.drupal.org/project/drupal/issues/3584793
 [drush]: https://www.drush.org/13.x/

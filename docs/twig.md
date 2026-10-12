@@ -1,8 +1,8 @@
 # Twig templates
 
 How the package counts members that Drupal templates use, what it does not
-see, and why it works this way. The [design](design.md) covers the rest of
-the package.
+see, and why it works this way. The [README](../README.md) covers the rest
+of the package.
 
 ## How it works
 
@@ -125,7 +125,7 @@ Keep cheap name matching, on by default. It costs about one hidden
 finding per site. It guards the case none of the corpora exercises much: a
 bundle class whose custom getter only templates call, which would otherwise
 be reported dead. That follows [when unsure, code is
-used](design.md#when-unsure-code-is-used).
+used](../README.md#by-design).
 
 Typing template variables, as [TwigStan][twigstan] does, is rejected for
 now. TwigStan compiles templates to PHP and types their variables from the
@@ -148,8 +148,8 @@ getters from templates before building either.
 
 ## How it got here
 
-- Wiring is [read statically](design.md#wiring-is-read-statically), and
-  [when unsure, code is used](design.md#when-unsure-code-is-used), so name
+- Wiring is [read statically](../README.md#by-design), and
+  [when unsure, code is used](../README.md#by-design), so name
   matching came first. shipmonk's own Twig support covers Twig extension
   callbacks and Symfony's `#[Template]` view data, neither of which reaches
   Drupal's templates.

@@ -10,7 +10,9 @@ dead code in your own modules, themes and profiles.
 
 ## Installation
 
-The package covers Drupal 11.3 and later on PHP 8.3 and later.
+The package covers Drupal 11.3 and later on PHP 8.3 and later. Drupal 10 is
+out of scope: its `drupal/core-dev` requires PHPStan 1, and shipmonk needs
+PHPStan 2.
 
 ```sh
 composer require --dev reload/dead-code-detector-drupal
@@ -147,9 +149,11 @@ rather than an omission:
 - **Site-specific callers get a provider in the site**, or an `@api` tag. See
   [when the detector cannot see the caller](#when-the-detector-cannot-see-the-caller).
 
-shipmonk's own parameters still apply, and this package does not change
-their defaults. `shipmonkDeadCode.usageExcluders.usageOverMixed.enabled` is
-the one most sites want to decide on.
+shipmonk's own parameters still apply, and this package cannot change their
+defaults: extension-installer loads shipmonk's rules after this package's, so
+switching off a kind of finding is yours to do.
+`shipmonkDeadCode.usageExcluders.usageOverMixed.enabled` is the one most sites
+want to decide on.
 
 ## Limitations
 
@@ -172,7 +176,9 @@ the one most sites want to decide on.
   where every public member is potential API, and no reporting of dead
   functions, which shipmonk does not analyse.
 - **Tests are a directory named `tests`** below an analysed path. A test
-  module elsewhere counts as production code.
+  module elsewhere counts as production code. shipmonk's own tests excluder
+  works from `autoload-dev`, which Drupal sites do not declare, so the
+  directory name is the only signal there is.
 
 ### Not covered yet
 
@@ -209,6 +215,10 @@ Use shipmonk's built-in mechanisms:
   `shipmonk.deadConstant`, `shipmonk.deadEnumCase`,
   `shipmonk.deadProperty.neverRead` and `shipmonk.deadProperty.neverWritten`.
 - **A baseline** handles legacy code.
+
+The package ships no attribute of its own for marking code as used, because
+production code would then depend on a dev-only package. If core adopts one,
+the package will recognise it.
 
 For a caller this package does not know, such as a contrib module or a
 library, write a usage provider of your own: a few lines of PHP, registered
@@ -253,8 +263,6 @@ this package instead.
 
 ## Documentation
 
-- [Design](docs/design.md): what was decided and why, including the
-  principles behind the limitations above.
 - [Coverage](docs/coverage.md): Drupal's documented mechanisms mapped to the
   providers, and what is not covered.
 - [Twig templates](docs/twig.md): how name matching works, what it misses,

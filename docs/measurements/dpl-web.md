@@ -1,8 +1,10 @@
 # Measurements: dpl-web
 
 These are runs of this package against [dpl-web][dpl-web]'s Drupal site
-(`cms/`). See the [spike plan](../design.md#spike) for the method and the
-success criteria.
+(`cms/`). The bar, set before measuring: at least 80% of the remaining
+findings are real dead code, per member kind; every false positive is
+attributed to a named mechanism, statically coverable or runtime-only; and a
+meaningful amount of real dead code is found.
 
 **Result**: 47 of the 60 findings in hand-written code are real dead code
 (78%). Methods and never-read properties pass the 80% bar, never-written
