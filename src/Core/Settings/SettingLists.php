@@ -22,7 +22,6 @@ use PhpParser\ParserFactory;
 
 use function array_unique;
 use function array_values;
-use function file_get_contents;
 use function in_array;
 use function strtolower;
 
@@ -37,12 +36,6 @@ use function strtolower;
  */
 final class SettingLists
 {
-    /**
-     * @var list<string>|null
-     *   Contents of the settings files, read on first use.
-     */
-    private ?array $contents = null;
-
     public function __construct(
         private readonly SettingsFiles $settingsFiles,
     ) {
@@ -55,32 +48,14 @@ final class SettingLists
      */
     public function lists(array $settingNames): array
     {
-        return self::parse($this->contents(), $settingNames);
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function contents(): array
-    {
-        if ($this->contents === null) {
-            $this->contents = [];
-            foreach ($this->settingsFiles->all() as $filePath) {
-                $fileContents = file_get_contents($filePath);
-                if ($fileContents !== false) {
-                    $this->contents[] = $fileContents;
-                }
-            }
-        }
-
-        return $this->contents;
+        return self::parse($this->settingsFiles->read(), $settingNames);
     }
 
     /**
      * Which file wins depends on includes and conditions, so the values of
      * every assignment are combined.
      *
-     * @param list<string> $contents
+     * @param array<string> $contents
      *   Contents of PHP files.
      * @param list<string> $settingNames
      * @return array<string, list<string>>

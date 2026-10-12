@@ -7,6 +7,8 @@ namespace Reload\DeadCodeDetectorDrupal\Tests\Support\Discovery;
 use PHPUnit\Framework\TestCase;
 use Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles;
 
+use function array_keys;
+
 final class SettingsFilesTest extends TestCase
 {
     private const DRUPAL_ROOT = __DIR__ . '/data/drupal-root';
@@ -20,6 +22,16 @@ final class SettingsFilesTest extends TestCase
     public function testFindsPhpFilesDirectlyInEachSiteDirectoryExceptTheTemplate(): void
     {
         self::assertSame(self::SETTINGS_FILES, SettingsFiles::inDrupalRoot(self::DRUPAL_ROOT)->all());
+    }
+
+    public function testReadsTheContentsOfEachFileItFound(): void
+    {
+        $contentsByFilePath = SettingsFiles::inDrupalRoot(self::DRUPAL_ROOT)->read();
+
+        self::assertSame(self::SETTINGS_FILES, array_keys($contentsByFilePath));
+        foreach ($contentsByFilePath as $contents) {
+            self::assertStringStartsWith('<?php', $contents);
+        }
     }
 
     public function testFindsSitesBesideCoreAtComposersInstallPath(): void

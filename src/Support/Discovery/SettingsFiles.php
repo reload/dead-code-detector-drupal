@@ -8,6 +8,7 @@ use Composer\InstalledVersions;
 use Symfony\Component\Filesystem\Path;
 
 use function basename;
+use function file_get_contents;
 use function glob;
 
 /**
@@ -18,6 +19,12 @@ use function glob;
  */
 final class SettingsFiles
 {
+    /**
+     * @var array<string, string>|null
+     *   Contents keyed by file path, read on first use.
+     */
+    private ?array $contentsByFilePath = null;
+
     /**
      * @param list<string> $filePaths
      */
@@ -72,5 +79,30 @@ final class SettingsFiles
     public function all(): array
     {
         return $this->filePaths;
+    }
+
+    /**
+     * @return array<string, string>
+     *   Contents keyed by file path; files that cannot be read are left out.
+     */
+    public function read(): array
+    {
+        return $this->contentsByFilePath ??= $this->readAll();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function readAll(): array
+    {
+        $contentsByFilePath = [];
+        foreach ($this->filePaths as $filePath) {
+            $contents = file_get_contents($filePath);
+            if ($contents !== false) {
+                $contentsByFilePath[$filePath] = $contents;
+            }
+        }
+
+        return $contentsByFilePath;
     }
 }
