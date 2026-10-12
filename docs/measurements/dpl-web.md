@@ -34,6 +34,9 @@ A dpl-web maintainer then reviewed every finding: see the
   of dpl-web's CLI container. This package is installed through a Composer
   `path` repository, and PHPStan's result cache is cleared before every run,
   because it cannot see code changes in a path repository.
+- **Rerun**: on 2026-10-12, this package at `afacf8c`, after its code was
+  restructured and the string-callable provider rewritten, reported the same
+  60 findings.
 - **Config**: `phpstan.dead-code.neon`, which is not committed to dpl-web:
   - Level 0. Only `shipmonk.*` errors are counted, with
     `tools/summarise-findings.php`.

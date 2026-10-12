@@ -27,6 +27,9 @@ serve as labels.
   simple_oauth, jsonapi_menu_items, drush and the OpenAPI libraries.
 - **Tools**: PHPStan 2.2, phpstan-drupal 2.x, shipmonk/dead-code-detector
   1.4.2, run in `uselagoon/php-8.4-cli-drupal`.
+- **Rerun**: on 2026-10-12, this package at `afacf8c`, after its code was
+  restructured and the string-callable provider rewritten, reported the same
+  61 findings with the same score.
 - **Config**: Canvas's own PHPStan settings without its usage providers. That
   means its paths, excludes and phpstan-drupal entity mapping, at level 0.
 - **Tests**: tests count as usage, so this package's tests excluder is off.
