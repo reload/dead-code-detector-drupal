@@ -73,9 +73,8 @@ Drupal sandbox lets templates call it.
 ## Values and arrays passed to templates
 
 Most Drupal templates do not get objects. Preprocess functions and render
-arrays pass scalars and arrays, and the template reads keys. The themed
-Reload projects have 17 to 43 preprocess hooks each, dpl-web has 60, and
-they pass values like these:
+arrays pass scalars and arrays, and the template reads keys. dpl-web has 60
+preprocess hooks, and they pass values like these:
 
 ```php
 $variables['url'] = $node->toUrl()->toString();
@@ -93,8 +92,8 @@ $variables['title'] = $variables['content']['link'][0]['#title'];
 - **Untyped values in preprocess:** `$variables['node']` is `mixed` to
   PHPStan, so `$variables['node']->getFoo()` keeps every method named
   `getFoo` alive, by shipmonk's default. With `usageOverMixed`, such calls
-  give false positives instead: 3 on the Reload projects, and none hidden.
-  A `@var` annotation or an `instanceof` check types the call.
+  give false positives instead. A `@var` annotation or an `instanceof` check
+  types the call.
 - **Array keys make name matching less precise,** not more useful. A key such
   as `.uri` or `.title` can match a class member by coincidence.
 - **Not covered:** a variable that preprocess computes but no template
@@ -110,8 +109,6 @@ almost nothing:
 
 | Corpus | Templates | Distinct names accessed | Members only Twig keeps alive |
 |---|---|---|---|
-| 5 decoupled Reload projects | 0 | 0 | 0 |
-| 5 themed Reload projects | 108–174 each | about 115 each | 0 |
 | dpl-web | 193 | 130 | 1, a coincidental match |
 | Canvas | 114 | 14 | 0 |
 

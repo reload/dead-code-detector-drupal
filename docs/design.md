@@ -1,28 +1,26 @@
 # Design
 
-Status: the design was agreed on 2026-10-02, and the spike was completed the
-same day. Decisions that changed during the spike say why.
+What this package decided and why. The decisions were made during a spike in
+October 2026 and hold for the current code; where one changed, the text says
+why. The [README](../README.md) describes the result for users, and
+[measurements](#evidence) hold the numbers.
 
 This package teaches [shipmonk/dead-code-detector][dcd] (DCD) how Drupal calls
 code. DCD can then report dead class members in Drupal sites without burying
 the real findings in false positives.
 
-## Verdict
+## Evidence
 
-It is feasible, and measured on three corpora:
+Measured on two corpora, each with its own report:
 
 - **[dpl-web](measurements/dpl-web.md)**: 314 findings in hand-written code
-  become 60. 47 of those are real dead code (78%). Every kind of member
+  become 60, of which 47 are real dead code (78%). Every kind of member
   passes the 80% bar except never-written properties, where a DCD limitation
   with shadowed trait properties causes six of eight findings.
-- **[Drupal Canvas](measurements/canvas.md)**: recall is 100%. Every dead
-  member that Canvas's maintainers removed is still reported. The package also
-  explains all but 3 of the in-scope findings Canvas had to keep alive with
-  12 hand-written providers.
-- **[Ten Reload client projects](measurements/reload-projects.md)**: 22 of 23
-  findings are members nothing uses (96%), once Hux hooks and JSON:API
-  Resources are covered. The projects are small and already run PHPStan, so
-  there is little dead code to find.
+- **[Drupal Canvas](measurements/canvas.md)**: every dead member that
+  Canvas's maintainers removed is still reported, and the package explains all
+  but 3 of the in-scope findings Canvas had kept alive with 12 hand-written
+  providers.
 
 DCD without Drupal knowledge is unusable on Drupal code: Canvas measured
 about 6% precision on its zero-config run.
@@ -191,7 +189,7 @@ come from concrete findings:
 |---|---|---|
 | `Drupal\rest\Plugin\ResourceInterface` | HTTP verb methods | dpl-web: 6 |
 | `Drupal\graphql\Plugin\DataProducerPluginInterface` | `resolve` | dpl-web: 23 |
-| `Drupal\jsonapi_resources\Resource\ResourceBase` | `process` | Reload projects: 1 |
+| `Drupal\jsonapi_resources\Resource\ResourceBase` | `process` | other sites: 1 |
 | `Drupal\Core\Routing\Access\AccessInterface` | `access` | Canvas: 1, registered in PHP |
 | `Drupal\Core\Config\Entity\ConfigEntityBase` | properties, read and written | Canvas: ~38 |
 | `Drupal\Component\Plugin\Attribute\AttributeBase` | properties, read | Canvas: ~8 |
@@ -219,8 +217,8 @@ Core's `#[TrustedCallback]` and `#[TwigAllowed]` only allow a call,
 sites, and 191 widely used or attribute-heavy modules from drupal.org. Only
 two have attributes that make Drupal call the method they are on:
 
-- **Hux** offered OOP hooks before core did. 4 of the 10 Reload projects use
-  it, so it is supported.
+- **Hux** offered OOP hooks before core did, and sites that adopted it have
+  not all migrated, so it is supported.
 - **Pinto** builds theme definitions from `#[ThemeDefinition]` methods. No
   benchmark project uses it, so it is not.
 
@@ -266,8 +264,14 @@ the measurement, the decision and how it came about.
   it. Nothing static reads the world. phpat rules in `tests/Architecture` keep
   `Support` free of Drupal areas and readers in the container, and shipmonk's
   rules fix the class suffixes.
-- **Configuration.** Parameters live under `drupalDeadCode`. They are a
-  published contract; see the [README](../README.md#configuration).
+- **Configuration.** Two switches under `drupalDeadCode`, for Twig matching
+  and the tests excluder, and nothing else. Wiring and the Twig sandbox lists
+  are read from the site, so nothing is declared twice and nothing drifts;
+  contrib is covered one module at a time with a provider each, because a
+  list of attribute or class names cannot say how a mechanism calls code; and
+  site-specific callers get a provider in the site or an `@api` tag. The two
+  parameters are a published contract; see the
+  [README](../README.md#configuration).
 - **Rule tests.** DCD's rule keeps state between analyses, so each analysis
   runs once: every test class with the same config files shares one container
   and one analysis of all their fixtures, and keeps the messages about its own,
@@ -276,32 +280,19 @@ the measurement, the decision and how it came about.
   installed for development, so fixtures build on core's real classes and are
   typed as on a site. Only contrib and Drush classes are stubbed.
 
-## Spike
+## Measurement corpora
 
-- **Corpora**:
-  - **dpl-web** (`cms/`): Drupal 11.4, PHPStan 2.2. 67 custom modules, the
-    `dpl_cms` profile and the `novel` theme.
-  - **Drupal Canvas**, at the commit before its DCD adoption, as a custom
-    module. Its maintainers' triage serves as labels.
-  - **Reload's Drupal 11 client projects**: ten sites, checked out locally.
-    Only anonymised results are recorded here.
-  - **bupl**, once it is on Drupal 11.
-- **Workflow**: the package is used from this repository, in a local dpl-web
-  worktree and a Canvas test site, through a Composer `path` repository.
-  Nothing is pushed to dpl-web.
-- **Success** requires all of:
-  1. At least 80% of the remaining findings are real dead code, measured per
-     member kind.
-  2. Every false positive is attributed to a named mechanism, which is either
-     statically coverable or runtime-only.
-  3. A meaningful amount of real dead code is found.
+- **dpl-web** (`cms/`): Drupal 11.4, PHPStan 2.2. 67 custom modules, the
+  `dpl_cms` profile and the `novel` theme. A dpl-web developer reviewed every
+  finding; see the [maintainer review](measurements/dpl-web.md#maintainer-review).
+- **Drupal Canvas**, at the commit before its DCD adoption, as a custom
+  module. Its maintainers' triage serves as labels.
 
-  All three are met on dpl-web. A dpl-web developer reviewed every finding
-  (see the [maintainer review](measurements/dpl-web.md#maintainer-review)).
-  Every false positive is outside Drupal's wiring.
-- **Reports**: [dpl-web](measurements/dpl-web.md),
-  [Canvas](measurements/canvas.md) and [Reload's
-  projects](measurements/reload-projects.md).
+The bar was set before measuring: at least 80% of the remaining findings are
+real dead code, measured per member kind; every false positive is attributed
+to a named mechanism, statically coverable or runtime-only; and a meaningful
+amount of real dead code is found. dpl-web meets all three, and every false
+positive there is outside Drupal's wiring.
 
 ## Known limitations
 
@@ -320,8 +311,8 @@ package:
 
 On dpl-web, graphql-php's default field resolver reads response objects'
 properties by name (3), and Symfony's serializer constructs input objects
-(3). On a Reload project, a contrib field formatter calls `label()` on plugins
-after checking `method_exists()` (1). Neither DCD nor this package sees these
+(3). Elsewhere, a contrib field formatter calls `label()` on plugins after
+checking `method_exists()` (1). Neither DCD nor this package sees these
 callers. The options, from no code to new providers:
 
 1. **`ignoreErrors` in the site's PHPStan config**, by identifier and path.
@@ -342,27 +333,22 @@ callers. The options, from no code to new providers:
    today only handles `#[MapRequestPayload]`, so it is an upstream candidate.
    This package could carry it meanwhile, since Drupal ships the serializer.
 
-## Later
+## Open threads
 
-- **A shareable write-up.**
-- **Upstream (DCD).** Stay silent until the end of the project, then consider
-  these candidates:
-  - the generic install-path fix to `VendorUsageProvider`
-  - `MyCLabs\Enum\Enum` constants
-  - Symfony serializer denormalisation
-  - the two DCD limitations above
-  - built-in Drupal support, which DCD's README allows for frameworks
-- **Upstream (phpstan-drupal)**, considered at the same time. The providers
-  could ship as an optional part of phpstan-drupal, active when DCD is
-  installed. Most of the Drupal knowledge they need already lives there: its
-  service map, extension list and entity mapping. DCD's maintainer may prefer
-  Drupal knowledge to stay in the Drupal ecosystem. A runtime metadata dump,
-  proposed in phpstan-drupal's issue #838 and deferred here, could serve both.
-- **Canvas.** Contact its maintainers, separately. The benchmark suggests
-  this package could replace most of its providers.
-- **Form routes from `#[Route]`**, once core releases them ([#3584793][form-routes]).
-  Core will find forms in a module's `Form` namespace by a class-level
-  `#[Route]`, and their constructors need the treatment controllers get.
+- **Upstream candidates for DCD**: the generic install-path fix to
+  `VendorUsageProvider`, `MyCLabs\Enum\Enum` constants, Symfony serializer
+  denormalisation, the two DCD limitations above, and built-in Drupal
+  support, which DCD's README allows for frameworks.
+- **Upstream to phpstan-drupal**: the providers could ship as an optional
+  part of it, active when DCD is installed, since most of the Drupal knowledge
+  they need lives there already. A runtime metadata dump, proposed in
+  phpstan-drupal's issue #838 and deferred here, could serve both.
+- **Canvas**: the benchmark suggests this package could replace most of its
+  providers; its maintainers have not been contacted.
+- **Form routes from `#[Route]`**, once core releases them
+  ([#3584793][form-routes]). Core will find forms in a module's `Form`
+  namespace by a class-level `#[Route]`, and their constructors need the
+  treatment controllers get.
 - **Not planned**: Drupal 10, a contrib mode, dead functions, bootstrapping
   Drupal.
 
