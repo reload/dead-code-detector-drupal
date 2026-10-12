@@ -48,5 +48,10 @@ Always use the make targets, and run the checks for every area you touch.
 - `make lint-php`, `make analyse-php`, `make test-php`, `make format-php`
 - `make lint-markdown`, `make lint-yaml`, `make lint-actions`
 - `make checks`: everything CI runs
+- `make test-coverage`, `make test-mutation`: coverage with pcov, and
+  Infection, in the image `Dockerfile` builds from the official one, since no
+  official image ships a coverage driver and the host PHP may lack one.
+  `MUTATE="src/Core/Hook/HookMethods.php"` limits the mutation run to files.
+  Not part of `make checks`.
 
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector

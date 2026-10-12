@@ -22,6 +22,7 @@
     },
     "require-dev": {
         "drupal/core": "^11.3 || ^12",
+        "infection/infection": "^0.35.6",
         "phpat/phpat": "^0.12.5",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^12.0",
@@ -42,7 +43,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "symfony/runtime": false,
-            "drupal/core-composer-scaffold": false
+            "drupal/core-composer-scaffold": false,
+            "infection/extension-installer": false
         }
     },
     "extra": {

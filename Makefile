@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: analyse-php checks format-php help lint-actions lint-markdown lint-php lint-yaml test-php validate-composer
+.PHONY: analyse-php checks format-php help lint-actions lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
 
 vendor: composer.json
 	composer install --no-interaction
@@ -13,6 +13,21 @@ analyse-php: vendor ## Analyse PHP code (PHPStan).
 
 test-php: vendor ## Run PHP tests (PHPUnit).
 	vendor/bin/phpunit
+
+# No official PHP image ships a coverage driver, and the host PHP may lack one
+# too, so the Docker targets run in the image Dockerfile builds from it.
+PHP_IMAGE = dead-code-detector-drupal/php
+IN_PHP_IMAGE = docker run --rm -v "$(CURDIR)":/app -w /app $(PHP_IMAGE)
+
+php-image: ## Build the image the Docker targets run in (see Dockerfile).
+	@docker build --quiet --tag $(PHP_IMAGE) - < Dockerfile >/dev/null
+
+test-coverage: vendor php-image ## Measure test coverage of src (PHPUnit with pcov, in Docker).
+	$(IN_PHP_IMAGE) vendor/bin/phpunit --coverage-text
+
+# One thread: concurrent rule tests collide in shipmonk's usage cache under /tmp.
+test-mutation: vendor php-image ## Mutation-test src (Infection, in Docker; MUTATE= limits it to files).
+	$(IN_PHP_IMAGE) vendor/bin/infection --threads=1 --show-mutations=max --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).
 	vendor/bin/phpcbf
