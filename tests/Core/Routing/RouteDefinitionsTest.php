@@ -70,6 +70,20 @@ final class RouteDefinitionsTest extends TestCase
         self::assertSame(['__construct', 'routes'], DeclaredMethods::of($usages, 'Drupal\example\DynamicRoutes'));
     }
 
+    public function testRouteListedAfterRouteCallbacksIsRead(): void
+    {
+        $usages = self::parse(<<<'YAML'
+            route_callbacks:
+              - '\Drupal\example\DynamicRoutes::routes'
+            example.page:
+              path: /example
+              defaults:
+                _controller: '\Drupal\example\RouteController::page'
+            YAML);
+
+        self::assertSame(['__construct', 'page'], DeclaredMethods::of($usages, 'Drupal\example\RouteController'));
+    }
+
     public function testEntityFormIsNotAClass(): void
     {
         $usages = self::parse(<<<'YAML'

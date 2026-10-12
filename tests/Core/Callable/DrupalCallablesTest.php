@@ -55,6 +55,22 @@ final class DrupalCallablesTest extends TestCase
         self::assertTrue(self::declare($definition)->isEmpty());
     }
 
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function definitionsWithAnEmptySide(): iterable
+    {
+        yield 'no method after "::"' => ['Drupal\example\ResolvedClass::'];
+        yield 'no class before "::"' => ['::method'];
+        yield 'no method after ":"' => ['example.service:'];
+    }
+
+    #[DataProvider('definitionsWithAnEmptySide')]
+    public function testDefinitionWithAnEmptySideDoesNotSplit(string $definition): void
+    {
+        self::assertNull(DrupalCallables::split($definition));
+    }
+
     private static function declare(mixed $definition): DeclaredUsages
     {
         $services = ServiceDefinitions::parse(['/site/example/example.services.yml' => <<<'YAML'

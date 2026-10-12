@@ -58,6 +58,19 @@ final class ClassLevelHookOnInvoke
     }
 }
 
+final class ClassWithTwoHookMethods
+{
+    #[Hook('node_insert')]
+    public function firstHookMethod(): void
+    {
+    }
+
+    #[Hook('node_update')]
+    public function secondHookMethod(): void
+    {
+    }
+}
+
 abstract class BaseDeclaringHookMethod
 {
     #[Hook('node_insert')]

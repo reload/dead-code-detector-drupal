@@ -9,6 +9,7 @@ use Drupal\example\HookMethods\ClassInheritingHookMethod;
 use Drupal\example\HookMethods\ClassLevelHookNamingMethod;
 use Drupal\example\HookMethods\ClassLevelHookNamingMethodPositionally;
 use Drupal\example\HookMethods\ClassLevelHookOnInvoke;
+use Drupal\example\HookMethods\ClassWithTwoHookMethods;
 use Drupal\example\HookMethods\MethodWithHuxAlterAttribute;
 use Drupal\example\HookMethods\MethodWithHuxHookAttribute;
 use Drupal\example\HookMethods\MethodWithHuxReplaceOriginalHookAttribute;
@@ -36,6 +37,8 @@ final class HookMethodsTest extends TestCase
         yield 'method a class-level hook names positionally'
             => [ClassLevelHookNamingMethodPositionally::class, ['methodNamedPositionally']];
         yield '__invoke() for a class-level hook naming no method' => [ClassLevelHookOnInvoke::class, ['__invoke']];
+        yield 'both hook methods of a class with two'
+            => [ClassWithTwoHookMethods::class, ['firstHookMethod', 'secondHookMethod']];
         yield 'inherited hook method' => [ClassInheritingHookMethod::class, ['inheritedHookMethod']];
         yield 'none for an abstract class' => [AbstractClassWithHookMethod::class, []];
         yield 'method with Hux hook attribute' => [MethodWithHuxHookAttribute::class, ['huxHookMethod']];

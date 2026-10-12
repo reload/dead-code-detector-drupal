@@ -38,6 +38,8 @@ final class HttpExceptionHandlersTest extends TestCase
         yield 'handler name with a suffix' => ['on404Page'];
         yield 'name of no status' => ['onSomethingElse'];
         yield 'too few digits' => ['on40'];
+        yield 'status class with letters after its digit' => ['on5ab'];
+        yield 'five letters of no status' => ['onabc'];
         yield 'the dispatching method itself' => ['onException'];
     }
 

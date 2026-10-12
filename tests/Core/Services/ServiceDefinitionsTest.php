@@ -95,6 +95,43 @@ final class ServiceDefinitionsTest extends TestCase
         );
     }
 
+    public function testCallEntryThatIsNoListIsIgnored(): void
+    {
+        $services = self::parse(<<<'YAML'
+            services:
+              example.malformed_call:
+                class: Drupal\example\ServiceWithMalformedCall
+                calls:
+                  - setLogger
+            YAML);
+
+        self::assertSame(['__construct'], self::declared($services, 'Drupal\example\ServiceWithMalformedCall'));
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function malformedFactoryLists(): iterable
+    {
+        yield 'list of one item' => ["['@example.service_factory']"];
+        yield 'list whose first item is no string' => ['[123, createService]'];
+    }
+
+    #[DataProvider('malformedFactoryLists')]
+    public function testMalformedFactoryListCallsNothing(string $factory): void
+    {
+        $services = self::parse(<<<YAML
+            services:
+              example.service_factory:
+                class: Drupal\\example\\ServiceFactory
+              example.factory_built:
+                class: Drupal\\example\\FactoryBuiltService
+                factory: {$factory}
+            YAML);
+
+        self::assertSame(['__construct'], self::declared($services, 'Drupal\example\ServiceFactory'));
+    }
+
     public function testConfiguratorIsCalledByContainer(): void
     {
         $services = self::parse(<<<'YAML'
@@ -208,6 +245,19 @@ final class ServiceDefinitionsTest extends TestCase
         self::assertTrue($services->declaredUsages()->isEmpty());
     }
 
+    public function testServiceListedAfterDefaultsIsRead(): void
+    {
+        $services = self::parse(<<<'YAML'
+            services:
+              _defaults:
+                autowire: true
+              example.after_defaults:
+                class: Drupal\example\ServiceAfterDefaults
+            YAML);
+
+        self::assertSame(['__construct'], self::declared($services, 'Drupal\example\ServiceAfterDefaults'));
+    }
+
     /**
      * @return iterable<string, array{string, string}>
      */
@@ -257,6 +307,23 @@ final class ServiceDefinitionsTest extends TestCase
         self::assertSame(
             ['__construct', 'checkFirst', 'checkSecond'],
             self::declared($services, 'Drupal\example\AccessCheckerWithTwoChecks'),
+        );
+    }
+
+    public function testEveryRecognisedTagOfOneServiceCallsItsMethods(): void
+    {
+        $services = self::parse(<<<'YAML'
+            services:
+              example.doubly_tagged:
+                class: Drupal\example\DoublyTaggedService
+                tags:
+                  - { name: access_check, applies_to: _example_access }
+                  - { name: service_collector, tag: example_handler }
+            YAML);
+
+        self::assertSame(
+            ['__construct', 'access', 'addHandler'],
+            self::declared($services, 'Drupal\example\DoublyTaggedService'),
         );
     }
 
@@ -333,6 +400,17 @@ final class ServiceDefinitionsTest extends TestCase
             YAML);
 
         self::assertNull($services->classOf('example.first'));
+    }
+
+    public function testServiceClassWithLeadingBackslashIsNamedWithoutIt(): void
+    {
+        $services = self::parse(<<<'YAML'
+            services:
+              example.prefixed:
+                class: \Drupal\example\ClassWithLeadingBackslash
+            YAML);
+
+        self::assertSame('Drupal\example\ClassWithLeadingBackslash', $services->classOf('example.prefixed'));
     }
 
     public function testInvalidYamlDeclaresNothing(): void

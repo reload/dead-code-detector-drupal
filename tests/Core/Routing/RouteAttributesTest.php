@@ -73,6 +73,7 @@ final class RouteAttributesTest extends TestCase
     public static function classesWithoutRoutes(): iterable
     {
         yield 'no route attribute' => self::controller(methodAttributeNames: [[]]);
+        yield 'method with an attribute that is no route' => self::controller(methodAttributeNames: [['Override']]);
         yield 'class-level route without __invoke'
             => self::controller(classAttributeNames: [self::ROUTE], methodAttributeNames: [[]]);
         yield 'invokable class without a route' => self::controller(isInvokable: true, methodAttributeNames: [[]]);

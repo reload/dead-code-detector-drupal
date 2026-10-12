@@ -93,6 +93,20 @@ final class LibraryPathsTest extends TestCase
         self::assertNull($libraryPaths->findPackageName('/site/custom/src/Unowned.php'));
     }
 
+    public function testPackageListedAfterMetapackageIsLibrary(): void
+    {
+        $libraryPaths = LibraryPaths::parse([
+            [
+                'versions' => [
+                    'example/metapackage' => ['install_path' => null],
+                    'example/after-metapackage' => ['install_path' => '/site/after'],
+                ],
+            ],
+        ]);
+
+        self::assertSame('example/after-metapackage', $libraryPaths->findPackageName('/site/after/src/Inside.php'));
+    }
+
     public function testPackagesFromEveryAutoloaderAreLibrary(): void
     {
         $libraryPaths = LibraryPaths::parse([
