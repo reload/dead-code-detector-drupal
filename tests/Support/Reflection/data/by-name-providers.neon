@@ -1,0 +1,2 @@
+# One PHPStan container for every test class built on ByNameRuleTestCase.
+parameters: []

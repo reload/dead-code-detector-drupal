@@ -128,3 +128,28 @@ services:
             services: @drupalDeadCode.serviceDefinitions
         tags:
             - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Rest\RestResourceUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Contrib\GraphQl\GraphQlDataProducerUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Contrib\JsonApi\JsonApiResourceUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\Access\AccessCheckerUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
+
+    -
+        class: Reload\DeadCodeDetectorDrupal\Core\EventSubscriber\HttpExceptionHandlerUsageProvider
+        tags:
+            - shipmonk.deadCode.memberUsageProvider
