@@ -12,7 +12,7 @@ use function ctype_alpha;
 use function explode;
 use function is_string;
 use function str_contains;
-use function str_replace;
+use function strtr;
 use function substr_count;
 
 /**
@@ -56,7 +56,7 @@ final class DrupalCallables
     {
         return $name !== ''
             && (ctype_alpha($name[0]) || $name[0] === '_')
-            && ctype_alnum(str_replace('_', '', $name));
+            && ctype_alnum(strtr($name, ['_' => '']));
     }
 
     /**
