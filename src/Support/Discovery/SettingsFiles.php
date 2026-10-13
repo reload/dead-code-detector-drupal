@@ -42,22 +42,27 @@ final class SettingsFiles
         return self::forCore($corePath, $twigTemplatesEnabled);
     }
 
-    /**
-     * Only the Twig sandbox reads settings, so with Twig matching off there
-     * are none to find.
-     */
     public static function forCore(?string $corePath, bool $twigTemplatesEnabled): self
     {
-        return $corePath === null || !$twigTemplatesEnabled ? new self([]) : self::besideCore($corePath);
+        $drupalRoot = self::drupalRoot($corePath, $twigTemplatesEnabled);
+
+        return $drupalRoot === null ? new self([]) : self::inDrupalRoot($drupalRoot);
     }
 
     /**
-     * Core lives in the Drupal root. Normalised without resolving symlinks, so
-     * a symlinked core still leads to the site's directories.
+     * Where to look for settings, if anywhere. Only the Twig sandbox reads
+     * them, so with Twig matching off there is nowhere. Core lives in the
+     * Drupal root; normalised without resolving symlinks, so a symlinked core
+     * still leads to the site's directories.
+     *
+     * @phpstan-pure
      */
-    public static function besideCore(string $corePath): self
+    public static function drupalRoot(?string $corePath, bool $twigTemplatesEnabled): ?string
     {
-        return self::inDrupalRoot(Path::getDirectory($corePath));
+        return $corePath === null || !$twigTemplatesEnabled
+            ? null
+            // @phpstan-ignore possiblyImpure.methodCall (an absolute path, as Composer's, reads no home directory)
+            : Path::getDirectory($corePath);
     }
 
     public static function inDrupalRoot(string $drupalRoot): self

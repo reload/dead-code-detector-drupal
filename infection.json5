@@ -12,7 +12,7 @@
         "Concat": {"ignoreSourceCodeByRegex": [".*\\$note.*", ".*' of ' \\. .*"]},
         "ConcatOperandRemoval": {"ignoreSourceCodeByRegex": [".*\\$note.*", ".*' of ' \\. .*"]},
         // Readers memoise what they read; reading again gives the same data.
-        "AssignCoalesce": {"ignoreSourceCodeByRegex": ["return \\$this->\\w+ \\?\\?= self::parse\\(.*"]},
+        "AssignCoalesce": {"ignoreSourceCodeByRegex": ["return \\$this->\\w+ \\?\\?= .*"]},
         // A larger explode limit still yields the two pieces used.
         "IncrementInteger": {"ignoreSourceCodeByRegex": [".*explode\\(.*, 2\\)[;,]"]},
         // Arrays used as sets: only their keys are read.

@@ -36,26 +36,31 @@ final class SettingsFilesTest extends TestCase
 
     public function testFindsSitesBesideCoreAtComposersInstallPath(): void
     {
-        self::assertSame(
-            self::SETTINGS_FILES,
-            SettingsFiles::besideCore(self::DRUPAL_ROOT . '/vendor/composer/../../core')->all(),
-        );
-    }
-
-    public function testFindsNothingWhileTwigMatchingIsOff(): void
-    {
         $corePath = self::DRUPAL_ROOT . '/vendor/composer/../../core';
 
-        self::assertSame([], SettingsFiles::forCore($corePath, twigTemplatesEnabled: false)->all());
-    }
-
-    public function testFindsNothingWithoutCore(): void
-    {
-        self::assertSame([], SettingsFiles::forCore(null, twigTemplatesEnabled: true)->all());
+        self::assertSame(self::SETTINGS_FILES, SettingsFiles::forCore($corePath, twigTemplatesEnabled: true)->all());
     }
 
     public function testFindsNothingBesideCoreWithoutSites(): void
     {
-        self::assertSame([], SettingsFiles::besideCore(__DIR__ . '/data/root-without-sites/core')->all());
+        self::assertSame(
+            [],
+            SettingsFiles::forCore(__DIR__ . '/data/root-without-sites/core', twigTemplatesEnabled: true)->all(),
+        );
+    }
+
+    public function testDrupalRootIsAboveCoreWithoutResolvingSymlinks(): void
+    {
+        self::assertSame('/site', SettingsFiles::drupalRoot('/site/vendor/composer/../../core', true));
+    }
+
+    public function testThereIsNoDrupalRootToSearchWhileTwigMatchingIsOff(): void
+    {
+        self::assertNull(SettingsFiles::drupalRoot('/site/core', false));
+    }
+
+    public function testThereIsNoDrupalRootWithoutCore(): void
+    {
+        self::assertNull(SettingsFiles::drupalRoot(null, true));
     }
 }
