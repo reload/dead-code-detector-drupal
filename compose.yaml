@@ -1,0 +1,44 @@
+---
+# The tool images the make targets run; Dependabot keeps the tags current.
+services:
+  php:
+    build: .
+    image: dead-code-detector-drupal/php
+    volumes:
+      - .:/app
+    working_dir: /app
+  markdownlint:
+    image: davidanson/markdownlint-cli2:v0.18.1
+    volumes:
+      - .:/workdir
+    working_dir: /workdir
+  lychee:
+    image: lycheeverse/lychee:0.24.2
+    volumes:
+      - .:/input
+    working_dir: /input
+  commitlint:
+    image: commitlint/commitlint:21.2.3
+    volumes:
+      - .:/app
+    working_dir: /app
+    # The checkout belongs to another user than the container's, which git refuses unless told.
+    environment:
+      GIT_CONFIG_COUNT: 1
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: /app
+  yamllint:
+    image: tmknom/yamllint:1.35.1
+    volumes:
+      - .:/data
+    working_dir: /data
+    # Forwarded so yamllint's "auto" format emits inline annotations in CI;
+    # both are unset locally, so output stays readable.
+    environment:
+      - GITHUB_ACTIONS
+      - GITHUB_WORKFLOW
+  actionlint:
+    image: rhysd/actionlint:1.7.7
+    volumes:
+      - .:/repo
+    working_dir: /repo
