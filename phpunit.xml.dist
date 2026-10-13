@@ -5,7 +5,9 @@
          cacheDirectory=".phpunit.cache"
          colors="true"
          failOnRisky="true"
-         failOnWarning="true">
+         failOnWarning="true"
+         executionOrder="random"
+         resolveDependencies="true">
     <php>
         <!-- Each rule test's config compiles its own PHPStan container. -->
         <ini name="memory_limit" value="1G"/>
