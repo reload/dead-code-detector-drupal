@@ -78,6 +78,16 @@ final class DrupalFilesTest extends TestCase
         self::assertSame(['single-file.routing.yml'], array_map(basename(...), $drupalFiles->all()));
     }
 
+    public function testAnalysedFileWithoutWiringSuffixIsSkipped(): void
+    {
+        $drupalFiles = new DrupalFiles([
+            __DIR__ . '/data/analysed-file-without-wiring-suffix.txt',
+            __DIR__ . '/data/single-file.routing.yml',
+        ]);
+
+        self::assertSame(['single-file.routing.yml'], array_map(basename(...), $drupalFiles->all()));
+    }
+
     public function testFilesAreReadBySuffix(): void
     {
         $drupalFiles = new DrupalFiles([__DIR__ . '/data/tree']);

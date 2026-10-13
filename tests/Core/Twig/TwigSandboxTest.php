@@ -11,7 +11,10 @@ use Reload\DeadCodeDetectorDrupal\Tests\Core\Twig\Sandbox\ClassOnAllowList;
 use Reload\DeadCodeDetectorDrupal\Tests\Core\Twig\Sandbox\SubclassOfClassOnAllowList;
 use Reload\DeadCodeDetectorDrupal\Tests\Core\Twig\Sandbox\SubclassOfClassOnCoreAllowList;
 use Reload\DeadCodeDetectorDrupal\Tests\Core\Twig\Sandbox\TemplateVariable;
+use Reload\DeadCodeDetectorDrupal\Core\Settings\SettingLists;
 use Reload\DeadCodeDetectorDrupal\Core\Twig\SandboxPolicy;
+use Reload\DeadCodeDetectorDrupal\Core\Twig\TwigSandbox;
+use Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles;
 
 /**
  * @phpstan-type MethodReference array{class-string, string}
@@ -113,6 +116,31 @@ final class TwigSandboxTest extends TestCase
             [TemplateVariable::class, 'renew'],
             [TemplateVariable::class, 'getTitle'],
         ];
+    }
+
+    /**
+     * @return iterable<string, array{MethodReference}>
+     */
+    public static function methodsEachSiteSettingAllows(): iterable
+    {
+        yield 'class on the allowed classes setting' => [[ClassOnAllowList::class, 'anything']];
+        yield 'method on the allowed methods setting' => [[TemplateVariable::class, 'renew']];
+        yield 'method with a prefix on the allowed prefixes setting' => [[TemplateVariable::class, 'GetShouted']];
+    }
+
+    /**
+     * Reading the site's settings is the thing under test, so this reads a
+     * fixture file.
+     *
+     * @param MethodReference $method
+     */
+    #[DataProvider('methodsEachSiteSettingAllows')]
+    public function testSandboxAppliesEachSettingOfTheSite(array $method): void
+    {
+        $settingsFiles = new SettingsFiles([__DIR__ . '/data/site-setting-each-allow-list/settings.php']);
+        $sandbox = new TwigSandbox(new SettingLists($settingsFiles));
+
+        self::assertTrue($sandbox->policy()->allows(new ReflectionMethod(...$method)));
     }
 
     private static function sandbox(): SandboxPolicy
