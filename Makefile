@@ -38,13 +38,13 @@ php-image: ## Build the image the Docker targets run in (see Dockerfile).
 test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit with pcov, in Docker).
 	$(PHP_RUNNER) vendor/bin/phpunit --coverage-text
 
-# Decision classes only. Readers and providers are reached through rule tests
-# sharing one analysis, so Infection cannot tell which test observes a mutant
-# there and reports false escapes.
-MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
+# All but providers and excluders, which phpat ties to their names. Only rule
+# tests reach them, sharing one analysis, so Infection cannot tell which test
+# observes a mutant there and reports false escapes.
+MUTATE ?= $(shell find src -name '*.php' ! -name '*UsageProvider.php' ! -name '*Excluder.php' | sort)
 
 # Parallel: rule-test.neon turns off dead-code-detector's on-disk usage cache, where parallel runs collide.
-test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
+test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test all but providers and excluders (Infection, in Docker; MUTATE= limits it to files).
 	$(PHP_RUNNER) vendor/bin/infection --threads=max --show-mutations=max --log-verbosity=all --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).

@@ -82,5 +82,5 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       # On the runner's own PHP, so Infection's annotations point at the files.
-      - name: Mutation-test the decision classes
+      - name: Mutation-test all but providers and excluders
         run: make test-mutation IN_DOCKER=

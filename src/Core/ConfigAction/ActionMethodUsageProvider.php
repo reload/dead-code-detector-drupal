@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Reload\DeadCodeDetectorDrupal\Core\ConfigAction;
 
-use Drupal\Core\Config\Action\Attribute\ActionMethod;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
-use ReflectionClass;
-use ReflectionMethod;
 use Reload\DeadCodeDetectorDrupal\Support\Reflection\ClassAncestry;
 use ShipMonk\PHPStan\DeadCode\Graph\ClassMethodRef;
 use ShipMonk\PHPStan\DeadCode\Graph\ClassMethodUsage;
@@ -47,7 +44,7 @@ final class ActionMethodUsageProvider implements MemberUsageProvider
             VirtualUsageData::withNote('Config action method, which recipes can call'),
         );
         $usages = [];
-        foreach (self::actionMethodNames($class) as $methodName) {
+        foreach (ActionMethods::methodNames($class) as $methodName) {
             // The class's own name, so the method it inherits or overrides counts.
             $usages[] = new ClassMethodUsage(
                 $origin,
@@ -56,37 +53,5 @@ final class ActionMethodUsageProvider implements MemberUsageProvider
         }
 
         return $usages;
-    }
-
-    /**
-     * Like EntityMethodDeriver, each class up the hierarchy: a parent's
-     * attribute also makes Drupal call an override that lacks it.
-     *
-     * @param ReflectionClass<*> $class
-     * @return list<string>
-     */
-    private static function actionMethodNames(ReflectionClass $class): array
-    {
-        $methodNames = [];
-        for ($current = $class; $current !== false; $current = $current->getParentClass()) {
-            foreach ($current->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if (self::hasActionMethodAttribute($method)) {
-                    $methodNames[] = $method->getName();
-                }
-            }
-        }
-
-        return $methodNames;
-    }
-
-    private static function hasActionMethodAttribute(ReflectionMethod $method): bool
-    {
-        foreach ($method->getAttributes() as $attribute) {
-            if ($attribute->getName() === ActionMethod::class) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

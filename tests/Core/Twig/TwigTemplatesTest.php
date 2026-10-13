@@ -66,6 +66,13 @@ final class TwigTemplatesTest extends TestCase
         self::assertSame([], $templates->accessedNames());
     }
 
+    public function testFilterNamesAreNotAccesses(): void
+    {
+        $templates = self::parse('{{ node.label|upper }}');
+
+        self::assertSame(['label'], $templates->accessedNames());
+    }
+
     public function testNamesInStringLiteralsAreNotAccesses(): void
     {
         $templates = self::parse("{{ 'node.inString' }}");

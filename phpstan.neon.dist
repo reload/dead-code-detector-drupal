@@ -13,6 +13,14 @@ parameters:
         - tests
     excludePaths:
         - tests/*/data/*
+    ignoreErrors:
+        # These decisions parse strings with libraries PHPStan has no purity
+        # data for; they read no files. Other files' calls are still reported.
+        -
+            message: '#^Possibly impure (call to method|instantiation of class) (PhpParser|Twig)\\#'
+            paths:
+                - src/Core/Settings/SettingLists.php
+                - src/Core/Twig/TwigTemplates.php
     shipmonkRules:
         classSuffixNaming:
             superclassToSuffixMapping:

@@ -11,7 +11,6 @@ use Twig\Loader\ArrayLoader;
 use Twig\Source;
 use Twig\Token;
 
-use function array_map;
 use function array_values;
 use function in_array;
 use function is_string;
@@ -41,6 +40,7 @@ final class TwigTemplates
 
     /**
      * @param array<string, string> $sourceByTemplatePath
+     * @phpstan-pure
      */
     public static function parse(array $sourceByTemplatePath): TemplateAccesses
     {
@@ -53,13 +53,19 @@ final class TwigTemplates
             }
         }
 
-        return new TemplateAccesses(array_map(array_values(...), $templatePathsByName));
+        $templatePathListsByName = [];
+        foreach ($templatePathsByName as $name => $templatePaths) {
+            $templatePathListsByName[$name] = array_values($templatePaths);
+        }
+
+        return new TemplateAccesses($templatePathListsByName);
     }
 
     /**
      * Names after "." or "?." in the template's expressions.
      *
      * @return list<string>
+     * @phpstan-pure
      */
     private static function accessedNamesIn(Environment $environment, string $templatePath, string $source): array
     {
@@ -92,6 +98,8 @@ final class TwigTemplates
     /**
      * Twig 3.21 and later lex the dot as an operator, earlier versions as
      * punctuation.
+     *
+     * @phpstan-pure
      */
     private static function isAccessOperator(Token $token): bool
     {

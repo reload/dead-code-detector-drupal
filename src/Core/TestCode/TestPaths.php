@@ -41,7 +41,7 @@ final class TestPaths
             // From the analysed path's own name down: a checkout under /builds/tests/ is not all
             // tests, but an analysed tests/ directory is.
             if (str_starts_with($filePath, $analysedPath . '/')) {
-                $relativePath = '/' . basename($analysedPath) . '/' . substr($filePath, strlen($analysedPath) + 1);
+                $relativePath = '/' . basename($analysedPath) . substr($filePath, strlen($analysedPath));
                 if (str_contains($relativePath, '/tests/')) {
                     return true;
                 }
