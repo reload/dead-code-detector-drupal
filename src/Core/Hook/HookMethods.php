@@ -19,6 +19,8 @@ use function is_string;
 final class HookMethods
 {
     /**
+     * The methods Drupal calls as hooks, with the hook each implements.
+     *
      * @param ReflectionClass<*> $class
      * @return array<string, string>
      *   Method name => hook it implements.

@@ -36,12 +36,17 @@ use function strtolower;
  */
 final class SettingLists
 {
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly SettingsFiles $settingsFiles,
     ) {
     }
 
     /**
+     * The lists the site's settings files assign to the named settings.
+     *
      * @param list<string> $settingNames
      * @return array<string, list<string>>
      *   Setting name => values, for the settings that any file assigns.
@@ -79,6 +84,9 @@ final class SettingLists
     }
 
     /**
+     * Every literal list assigned, and every literal string appended, to a
+     * setting in the file; none if it does not parse.
+     *
      * @return list<array{string, list<string>}>
      *   Setting name and values of each literal assignment or append.
      * @phpstan-pure
@@ -136,6 +144,8 @@ final class SettingLists
     }
 
     /**
+     * The strings of an array literal.
+     *
      * @return list<string>|null
      *   Null when any item is computed at runtime.
      * @phpstan-pure

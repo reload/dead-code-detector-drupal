@@ -23,6 +23,8 @@ abstract class MethodsCalledByNameUsageProvider extends ReflectionBasedMemberUsa
     abstract protected function typeName(): string;
 
     /**
+     * The methods called by name.
+     *
      * @return list<string>
      *   Lowercased, as PHP method names are case-insensitive.
      */
@@ -33,6 +35,10 @@ abstract class MethodsCalledByNameUsageProvider extends ReflectionBasedMemberUsa
      */
     abstract protected function note(): string;
 
+    /**
+     * Used when public, named in methodNames() and declared on a subtype of
+     * typeName().
+     */
     protected function shouldMarkMethodAsUsed(ReflectionMethod $method): ?VirtualUsageData
     {
         if (

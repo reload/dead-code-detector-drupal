@@ -20,17 +20,27 @@ use function sort;
  */
 final class DrupalFilesResultCacheMetaExtension implements ResultCacheMetaExtension
 {
+    /**
+     * Hashes the files both readers read.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
         private readonly SettingsFiles $settingsFiles,
     ) {
     }
 
+    /**
+     * Unique to this package among PHPStan's result cache extensions.
+     */
     public function getKey(): string
     {
         return 'reload/dead-code-detector-drupal';
     }
 
+    /**
+     * Changes when a wiring or settings file changes, or a wiring file moves
+     * within the analysed tree.
+     */
     public function getHash(): string
     {
         $fileFacts = [];

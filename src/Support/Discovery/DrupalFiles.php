@@ -38,17 +38,22 @@ final class DrupalFiles
     private const SKIPPED_DIRECTORIES = ['node_modules', 'vendor'];
 
     /**
+     * File path => its path relative to the analysed path it was found under.
+     *
      * @var array<string, string>|null
-     *   File path => its path relative to the analysed path it was found under.
      */
     private ?array $relativePathByFilePath = null;
 
     /**
+     * The kinds of file to find; templates only with Twig matching on.
+     *
      * @var list<string>
      */
     private readonly array $suffixes;
 
     /**
+     * Finds nothing until first use.
+     *
      * @param list<string> $analysedPaths
      * @param bool $twigTemplatesEnabled
      *   Off, no templates are found, so nothing reads or hashes them.
@@ -68,6 +73,8 @@ final class DrupalFiles
     }
 
     /**
+     * Every wiring file found, by path.
+     *
      * @return list<string>
      */
     public function all(): array
@@ -76,6 +83,9 @@ final class DrupalFiles
     }
 
     /**
+     * Found on first use. The result cache hashes the relative paths, which the
+     * tests excluder depends on.
+     *
      * @return array<string, string>
      *   File path => its path relative to the analysed path it was found under.
      */
@@ -85,6 +95,9 @@ final class DrupalFiles
     }
 
     /**
+     * The files of one kind, such as DrupalFiles::SERVICES, read; unreadable
+     * ones are left out.
+     *
      * @return array<string, string>
      *   Contents keyed by file path.
      */
@@ -104,6 +117,9 @@ final class DrupalFiles
     }
 
     /**
+     * Searches the analysed paths, minus the excluded ones; an analysed file
+     * counts when its suffix does.
+     *
      * @return array<string, string>
      */
     private function find(): array
@@ -143,6 +159,9 @@ final class DrupalFiles
         return $relativePathByFilePath;
     }
 
+    /**
+     * Whether a file is of a kind this instance looks for.
+     */
     private function hasWiringSuffix(string $filePath): bool
     {
         foreach ($this->suffixes as $suffix) {

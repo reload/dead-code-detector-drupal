@@ -14,16 +14,25 @@ use Reload\DeadCodeDetectorDrupal\Support\Reflection\MethodsCalledByNameUsagePro
  */
 final class JsonApiResourceUsageProvider extends MethodsCalledByNameUsageProvider
 {
+    /**
+     * Named as a string, as JSON:API Resources may not be installed.
+     */
     protected function typeName(): string
     {
         return 'Drupal\jsonapi_resources\Resource\ResourceBase';
     }
 
+    /**
+     * process(), whose arguments vary per resource.
+     */
     protected function methodNames(): array
     {
         return ['process'];
     }
 
+    /**
+     * Names JsonapiResourceController as the caller.
+     */
     protected function note(): string
     {
         return 'JSON:API resource, called by JsonapiResourceController';

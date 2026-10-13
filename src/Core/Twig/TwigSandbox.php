@@ -15,6 +15,9 @@ final class TwigSandbox
 {
     private ?SandboxPolicy $policy = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly SettingLists $settingLists,
     ) {

@@ -8,6 +8,9 @@ use ReflectionClass;
 
 use function array_keys;
 
+/**
+ * Type checks by name, for types that may not be installed.
+ */
 final class ClassAncestry
 {
     /**
@@ -39,6 +42,8 @@ final class ClassAncestry
     }
 
     /**
+     * The class's traits and their traits, recursively.
+     *
      * @param ReflectionClass<*> $class
      * @return array<string, true>
      * @phpstan-pure

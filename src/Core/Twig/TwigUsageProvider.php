@@ -27,6 +27,9 @@ use function sprintf;
  */
 final class TwigUsageProvider extends ReflectionBasedMemberUsageProvider
 {
+    /**
+     * Records the templates each usage comes from for the tests excluder.
+     */
     public function __construct(
         private readonly TwigTemplates $templates,
         private readonly TwigSandbox $sandbox,
@@ -53,6 +56,10 @@ final class TwigUsageProvider extends ReflectionBasedMemberUsageProvider
         return $usages;
     }
 
+    /**
+     * Used when a template accesses a name reaching the method and the sandbox
+     * lets it call it.
+     */
     protected function shouldMarkMethodAsUsed(ReflectionMethod $method): ?VirtualUsageData
     {
         if (!TwigAccess::callsMethod($method)) {
@@ -65,6 +72,10 @@ final class TwigUsageProvider extends ReflectionBasedMemberUsageProvider
         return $templatePaths !== [] && $this->sandbox->policy()->allows($method) ? self::note($templatePaths) : null;
     }
 
+    /**
+     * Read when a template accesses the property by name; the sandbox does not
+     * limit properties.
+     */
     protected function shouldMarkPropertyAsRead(ReflectionProperty $property): ?VirtualUsageData
     {
         if (!TwigAccess::readsProperty($property)) {
@@ -77,6 +88,9 @@ final class TwigUsageProvider extends ReflectionBasedMemberUsageProvider
     }
 
     /**
+     * The templates accessing a name Twig resolves to the method: its own, or
+     * without its get, is or has prefix.
+     *
      * @return list<string>
      */
     private function templatesReaching(string $methodName): array
@@ -90,6 +104,8 @@ final class TwigUsageProvider extends ReflectionBasedMemberUsageProvider
     }
 
     /**
+     * The note, naming the first template accessing the name.
+     *
      * @param non-empty-list<string> $templatePaths
      */
     private static function note(array $templatePaths): VirtualUsageData

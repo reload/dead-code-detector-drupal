@@ -22,6 +22,10 @@ final class DrushUsageProvider extends ReflectionBasedMemberUsageProvider
 {
     private const COMMAND_ATTRIBUTES = ['Drush\Attributes\Command', 'Drush\Attributes\Hook'];
 
+    /**
+     * Commands and hooks, by attribute or by annotation, and the factories and
+     * constructors of command classes.
+     */
     protected function shouldMarkMethodAsUsed(ReflectionMethod $method): ?VirtualUsageData
     {
         foreach ($method->getAttributes() as $attribute) {

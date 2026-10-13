@@ -42,6 +42,8 @@ final class ActionMethods
     }
 
     /**
+     * Whether the method carries #[ActionMethod].
+     *
      * @phpstan-pure
      */
     private static function hasActionMethodAttribute(ReflectionMethod $method): bool

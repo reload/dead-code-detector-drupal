@@ -23,6 +23,9 @@ use ShipMonk\PHPStan\DeadCode\Provider\VirtualUsageData;
  */
 final class HookUsageProvider implements MemberUsageProvider
 {
+    /**
+     * The class's hook implementations, and its constructor when it has any.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         // @phpstan-ignore phpstanApi.instanceofAssumption

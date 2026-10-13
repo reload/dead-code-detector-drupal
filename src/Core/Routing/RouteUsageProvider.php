@@ -13,6 +13,10 @@ use Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage\DeclaredUsages;
  */
 final class RouteUsageProvider extends DeclaredUsageProvider
 {
+    /**
+     * Declares what the reader finds, recording its files for the tests
+     * excluder.
+     */
     public function __construct(
         private readonly RouteDefinitions $routes,
         OriginFiles $originFiles,
@@ -20,6 +24,9 @@ final class RouteUsageProvider extends DeclaredUsageProvider
         parent::__construct($originFiles);
     }
 
+    /**
+     * The callables in every routing file.
+     */
     protected function declaredUsages(): DeclaredUsages
     {
         return $this->routes->declaredUsages();

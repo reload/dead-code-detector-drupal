@@ -13,6 +13,10 @@ use Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage\DeclaredUsages;
  */
 final class SchemaCallbackUsageProvider extends DeclaredUsageProvider
 {
+    /**
+     * Declares what the reader finds, recording its files for the tests
+     * excluder.
+     */
     public function __construct(
         private readonly SchemaCallbacks $callbacks,
         OriginFiles $originFiles,
@@ -20,6 +24,9 @@ final class SchemaCallbackUsageProvider extends DeclaredUsageProvider
         parent::__construct($originFiles);
     }
 
+    /**
+     * The callbacks in every schema file.
+     */
     protected function declaredUsages(): DeclaredUsages
     {
         return $this->callbacks->declaredUsages();

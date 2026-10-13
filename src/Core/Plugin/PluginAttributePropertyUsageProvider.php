@@ -17,16 +17,25 @@ use ShipMonk\PHPStan\DeadCode\Enum\AccessType;
  */
 final class PluginAttributePropertyUsageProvider extends PropertiesAccessedByNameUsageProvider
 {
+    /**
+     * The base class whose get() returns the properties.
+     */
     protected function typeName(): string
     {
         return AttributeBase::class;
     }
 
+    /**
+     * Read only: the attribute's constructor writes them.
+     */
     protected function accessTypes(): array
     {
         return [AccessType::READ];
     }
 
+    /**
+     * Names AttributeBase::get() as the reader.
+     */
     protected function note(): string
     {
         return 'Plugin definition, read by AttributeBase::get()';

@@ -20,16 +20,25 @@ use Symfony\Component\Validator\Constraint;
  */
 final class ConstraintPropertyUsageProvider extends PropertiesAccessedByNameUsageProvider
 {
+    /**
+     * Symfony's base class, whose constructor writes the options.
+     */
     protected function typeName(): string
     {
         return Constraint::class;
     }
 
+    /**
+     * Written only: the constraint's validator reads them in PHP.
+     */
     protected function accessTypes(): array
     {
         return [AccessType::WRITE];
     }
 
+    /**
+     * Names Constraint::__construct() as the writer.
+     */
     protected function note(): string
     {
         return 'Constraint option, set by Constraint::__construct()';

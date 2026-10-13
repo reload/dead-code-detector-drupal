@@ -10,6 +10,9 @@ namespace Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage;
 final class DeclaredMethodUsage
 {
     /**
+     * Built by DeclaredUsages, which merges the files declaring the same
+     * method.
+     *
      * @param non-empty-list<string> $wiringFiles
      *   Each of them declares the call.
      * @phpstan-pure

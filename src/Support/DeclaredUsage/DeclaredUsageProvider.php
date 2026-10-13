@@ -22,6 +22,9 @@ use ShipMonk\PHPStan\DeadCode\Provider\VirtualUsageData;
  */
 abstract class DeclaredUsageProvider implements MemberUsageProvider
 {
+    /**
+     * Records each usage's wiring files for the tests excluder.
+     */
     public function __construct(
         private readonly OriginFiles $originFiles,
     ) {
@@ -32,6 +35,10 @@ abstract class DeclaredUsageProvider implements MemberUsageProvider
      */
     abstract protected function declaredUsages(): DeclaredUsages;
 
+    /**
+     * The usages declared on the class being analysed, each recording its
+     * wiring files.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         // @phpstan-ignore phpstanApi.instanceofAssumption
