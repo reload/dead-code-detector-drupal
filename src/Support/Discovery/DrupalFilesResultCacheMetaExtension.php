@@ -36,7 +36,7 @@ final class DrupalFilesResultCacheMetaExtension implements ResultCacheMetaExtens
         $fileFacts = [];
         foreach ($this->drupalFiles->relativePathByFilePath() as $filePath => $relativePath) {
             // A wiring file's place in the tree counts too: the tests excluder judges usages by it.
-            $fileFacts[] = $relativePath . ' ' . (hash_file('sha256', $filePath) ?: '');
+            $fileFacts[] = implode(' ', [$relativePath, hash_file('sha256', $filePath) ?: '']);
         }
 
         foreach ($this->settingsFiles->all() as $filePath) {

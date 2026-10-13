@@ -7,10 +7,13 @@ namespace Reload\DeadCodeDetectorDrupal\Tests\Architecture;
 use PHPat\Selector\Selector;
 use PHPat\Test\Builder\Rule;
 use PHPat\Test\PHPat;
+use ShipMonk\PHPStan\DeadCode\Excluder\MemberUsageExcluder;
+use ShipMonk\PHPStan\DeadCode\Provider\MemberUsageProvider;
 
 /**
  * The layering PHPStan checks through phpat: Support knows no Drupal area,
- * Contrib builds on Support alone, and readers come from the container.
+ * Contrib builds on Support alone, and readers come from the container. Only
+ * providers and excluders carry their names, which test-mutation skips.
  *
  * Classes are named as strings, so the rules hold from the first commit on.
  */
@@ -69,5 +72,23 @@ final class Layers
             ->shouldNotConstruct()
             ->classes(...$readers)
             ->because('readers are services the container builds from their sources and injects');
+    }
+
+    public function testOnlyProvidersAreNamedUsageProvider(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::classname('/UsageProvider$/', true))
+            ->shouldImplement()
+            ->classes(Selector::classname(MemberUsageProvider::class))
+            ->because('test-mutation skips files named so, as rule tests alone reach providers');
+    }
+
+    public function testOnlyExcludersAreNamedExcluder(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::classname('/Excluder$/', true))
+            ->shouldImplement()
+            ->classes(Selector::classname(MemberUsageExcluder::class))
+            ->because('test-mutation skips files named so, as rule tests alone reach excluders');
     }
 }
