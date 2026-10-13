@@ -5,6 +5,10 @@ A PHPStan extension: Drupal usage providers for
 does for users and why it works the way it does; this file is for changing
 it.
 
+This file holds what no tool checks. A rule that a tool enforces lives in
+that tool's configuration, which reports it where it applies; leave it out
+of here.
+
 ## Documentation
 
 - `README.md`: installation, what counts as used, configuration, limitations,
@@ -47,20 +51,9 @@ it.
 - Keep reading the world separate from deciding about it. A reader is a
   service the container builds from its sources and injects; it reads once,
   on first use. A decision is a static function of data, `parse()` included,
-  and carries `@phpstan-pure`, which PHPStan checks. PHPStan has no purity
-  data for nikic/php-parser and Twig, so `phpstan.neon.dist` accepts the
-  parsers' calls to them. Nothing static reads the world, and unit tests must
-  not need the filesystem.
-- `tests/Architecture` holds the phpat rules PHPStan runs: `Support` depends
-  on no Drupal area, `Contrib` builds on `Support` alone, and readers are
-  built by the container only. dead-code-detector's rules name providers
-  `*UsageProvider` and excluders `*Excluder`, and phpat keeps those names for
-  them: `test-mutation` skips them, as rule tests alone reach them.
+  and carries `@phpstan-pure`, which PHPStan checks. Nothing static reads the
+  world, and unit tests must not need the filesystem.
 - Name fixture classes and members after the case they prove.
-- Commit messages follow Conventional Commits: the release workflow reads
-  them to pick the version and write the changelog, so the type and the
-  subject must say what changed for users. `make lint-commits` checks them
-  against `origin/main`, as CI does on pull requests.
 - phpstan-drupal is a dependency for how it analyses Drupal code; do not
   build on its static maps. Use dead-code-detector only through its documented
   extension points.
