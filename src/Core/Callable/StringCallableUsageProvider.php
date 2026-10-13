@@ -19,11 +19,8 @@ use ShipMonk\PHPStan\DeadCode\Graph\UsageOrigin;
 use ShipMonk\PHPStan\DeadCode\Provider\MemberUsageProvider;
 
 use function array_map;
-use function ctype_alnum;
-use function ctype_alpha;
 use function in_array;
 use function ltrim;
-use function str_replace;
 use function str_starts_with;
 use function strlen;
 use function strtolower;
@@ -156,15 +153,8 @@ final class StringCallableUsageProvider implements MemberUsageProvider
     {
         $class = $scope->getClassReflection();
 
-        return $class !== null && self::isMethodName($methodName)
+        return $class !== null && DrupalCallables::isMethodName($methodName)
             ? [new ClassMethodRef($class->getName(), $methodName, possibleDescendant: true)]
             : [];
-    }
-
-    private static function isMethodName(string $name): bool
-    {
-        return $name !== ''
-            && (ctype_alpha($name[0]) || $name[0] === '_')
-            && ctype_alnum(str_replace('_', '', $name));
     }
 }

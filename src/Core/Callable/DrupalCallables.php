@@ -7,9 +7,12 @@ namespace Reload\DeadCodeDetectorDrupal\Core\Callable;
 use Reload\DeadCodeDetectorDrupal\Core\Services\ServiceWiring;
 use Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage\DeclaredUsages;
 
+use function ctype_alnum;
+use function ctype_alpha;
 use function explode;
 use function is_string;
 use function str_contains;
+use function str_replace;
 use function substr_count;
 
 /**
@@ -41,6 +44,19 @@ final class DrupalCallables
         }
 
         return $target !== '' && $methodName !== '' ? [$target, $methodName] : null;
+    }
+
+    /**
+     * Whether a name is one PHP allows for a method, as in Form API's
+     * "::method".
+     *
+     * @phpstan-pure
+     */
+    public static function isMethodName(string $name): bool
+    {
+        return $name !== ''
+            && (ctype_alpha($name[0]) || $name[0] === '_')
+            && ctype_alnum(str_replace('_', '', $name));
     }
 
     /**

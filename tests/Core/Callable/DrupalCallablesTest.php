@@ -71,6 +71,40 @@ final class DrupalCallablesTest extends TestCase
         self::assertNull(DrupalCallables::split($definition));
     }
 
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function methodNames(): iterable
+    {
+        yield 'letters' => ['submitForm'];
+        yield 'leading underscore' => ['_submitForm'];
+        yield 'underscore between words' => ['submit_form'];
+        yield 'digit after the first character' => ['submitStep2'];
+    }
+
+    #[DataProvider('methodNames')]
+    public function testNameIsAMethodName(string $name): void
+    {
+        self::assertTrue(DrupalCallables::isMethodName($name));
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function notMethodNames(): iterable
+    {
+        yield 'empty name' => [''];
+        yield 'leading digit' => ['2ndStep'];
+        yield 'dot between words' => ['form.submit'];
+        yield 'space between words' => ['submit form'];
+    }
+
+    #[DataProvider('notMethodNames')]
+    public function testNameIsNotAMethodName(string $name): void
+    {
+        self::assertFalse(DrupalCallables::isMethodName($name));
+    }
+
     private static function declare(mixed $definition): DeclaredUsages
     {
         $services = ServiceDefinitions::parse(['/site/example/example.services.yml' => <<<'YAML'
