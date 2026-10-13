@@ -24,6 +24,9 @@ final class PermissionCallbacks
 {
     private ?DeclaredUsages $declaredUsages = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
         private readonly ServiceDefinitions $services,
@@ -42,6 +45,9 @@ final class PermissionCallbacks
     }
 
     /**
+     * The permission callbacks each file lists, resolved as Drupal resolves
+     * callables.
+     *
      * @param array<string, string> $yamlByFilePath
      * @phpstan-pure
      */

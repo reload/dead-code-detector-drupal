@@ -26,6 +26,9 @@ final class RouteAttributes
     ];
 
     /**
+     * Whether discovery finds routes on the class: it reads only concrete
+     * classes in a module's Controller namespace.
+     *
      * @param list<string> $classAttributeNames
      * @param list<list<string>> $methodAttributeNames
      *   Attribute names of each method, inherited methods included.
@@ -57,6 +60,8 @@ final class RouteAttributes
     }
 
     /**
+     * Whether any of the attributes is a route.
+     *
      * @param list<string> $attributeNames
      * @phpstan-pure
      */

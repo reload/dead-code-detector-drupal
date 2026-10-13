@@ -25,6 +25,9 @@ final class TwigTemplates
 {
     private ?TemplateAccesses $accesses = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
     ) {
@@ -39,6 +42,8 @@ final class TwigTemplates
     }
 
     /**
+     * The names each template accesses, found by lexing alone.
+     *
      * @param array<string, string> $sourceByTemplatePath
      * @phpstan-pure
      */

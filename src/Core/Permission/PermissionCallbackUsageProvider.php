@@ -13,6 +13,10 @@ use Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage\DeclaredUsages;
  */
 final class PermissionCallbackUsageProvider extends DeclaredUsageProvider
 {
+    /**
+     * Declares what the reader finds, recording its files for the tests
+     * excluder.
+     */
     public function __construct(
         private readonly PermissionCallbacks $callbacks,
         OriginFiles $originFiles,
@@ -20,6 +24,9 @@ final class PermissionCallbackUsageProvider extends DeclaredUsageProvider
         parent::__construct($originFiles);
     }
 
+    /**
+     * The callbacks in every permissions file.
+     */
     protected function declaredUsages(): DeclaredUsages
     {
         return $this->callbacks->declaredUsages();

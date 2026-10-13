@@ -18,16 +18,25 @@ use ShipMonk\PHPStan\DeadCode\Enum\AccessType;
  */
 final class ConfigEntityPropertyUsageProvider extends PropertiesAccessedByNameUsageProvider
 {
+    /**
+     * The base class whose constructor and toArray() access the properties.
+     */
     protected function typeName(): string
     {
         return ConfigEntityBase::class;
     }
 
+    /**
+     * Both: the constructor writes the properties and toArray() reads them.
+     */
     protected function accessTypes(): array
     {
         return [AccessType::READ, AccessType::WRITE];
     }
 
+    /**
+     * Says config is where the values come from and go to.
+     */
     protected function note(): string
     {
         return 'Config entity property, set from and exported to config';

@@ -20,12 +20,15 @@ use function glob;
 final class SettingsFiles
 {
     /**
+     * Contents keyed by file path, read on first use.
+     *
      * @var array<string, string>|null
-     *   Contents keyed by file path, read on first use.
      */
     private ?array $contentsByFilePath = null;
 
     /**
+     * Takes the files as given; find() looks for them.
+     *
      * @param list<string> $filePaths
      */
     public function __construct(
@@ -33,6 +36,9 @@ final class SettingsFiles
     ) {
     }
 
+    /**
+     * The settings files of the site whose core Composer installed.
+     */
     public static function find(bool $twigTemplatesEnabled = true): self
     {
         $corePath = InstalledVersions::isInstalled('drupal/core')
@@ -42,6 +48,10 @@ final class SettingsFiles
         return self::forCore($corePath, $twigTemplatesEnabled);
     }
 
+    /**
+     * The settings files of the site around a core directory, if Twig matching
+     * needs them.
+     */
     public static function forCore(?string $corePath, bool $twigTemplatesEnabled): self
     {
         $drupalRoot = self::drupalRoot($corePath, $twigTemplatesEnabled);
@@ -65,6 +75,10 @@ final class SettingsFiles
             : Path::getDirectory($corePath);
     }
 
+    /**
+     * Every PHP file in the root's site directories but the template Drupal
+     * never loads.
+     */
     public static function inDrupalRoot(string $drupalRoot): self
     {
         $filePaths = [];
@@ -79,6 +93,8 @@ final class SettingsFiles
     }
 
     /**
+     * The file paths, read or not, for the result cache to hash.
+     *
      * @return list<string>
      */
     public function all(): array
@@ -87,6 +103,8 @@ final class SettingsFiles
     }
 
     /**
+     * Read on first use.
+     *
      * @return array<string, string>
      *   Contents keyed by file path; files that cannot be read are left out.
      */
@@ -96,6 +114,8 @@ final class SettingsFiles
     }
 
     /**
+     * Reads every file.
+     *
      * @return array<string, string>
      */
     private function readAll(): array

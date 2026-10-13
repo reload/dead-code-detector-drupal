@@ -15,6 +15,8 @@ use function strtolower;
 final class DeclaredUsages
 {
     /**
+     * Private: none() and withMethod() build it.
+     *
      * @param array<string, array<string, DeclaredMethodUsage>> $usagesByClass
      *   Lowercased class name => lowercased method name => usage.
      * @phpstan-pure
@@ -25,6 +27,8 @@ final class DeclaredUsages
     }
 
     /**
+     * The start for a reader adding usages one at a time.
+     *
      * @phpstan-pure
      */
     public static function none(): self
@@ -55,12 +59,17 @@ final class DeclaredUsages
         return new self($usagesByClass);
     }
 
+    /**
+     * Whether nothing is declared.
+     */
     public function isEmpty(): bool
     {
         return $this->usagesByClass === [];
     }
 
     /**
+     * The usages declared on the class itself, not on its parents.
+     *
      * @return list<DeclaredMethodUsage>
      */
     public function usagesOf(string $className): array
@@ -69,6 +78,9 @@ final class DeclaredUsages
     }
 
     /**
+     * PHP class names are case-insensitive, and YAML may name them with a
+     * leading backslash.
+     *
      * @phpstan-pure
      */
     private static function classKey(string $className): string

@@ -41,6 +41,8 @@ final class HttpExceptionHandlers
     }
 
     /**
+     * Whether onException() reaches the method by its name alone.
+     *
      * @phpstan-pure
      */
     public static function isHandlerName(string $methodName): bool

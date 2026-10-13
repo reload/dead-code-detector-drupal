@@ -21,6 +21,9 @@ use ShipMonk\PHPStan\DeadCode\Graph\ClassMemberUsage;
  */
 final class TestsUsageExcluder implements MemberUsageExcluder
 {
+    /**
+     * With drupalDeadCode.testsExcluder.enabled off, it excludes nothing.
+     */
     public function __construct(
         private readonly bool $enabled,
         private readonly TestPaths $testPaths,
@@ -29,11 +32,17 @@ final class TestsUsageExcluder implements MemberUsageExcluder
     ) {
     }
 
+    /**
+     * Shown in dead-code-detector's message for members only tests use.
+     */
     public function getIdentifier(): string
     {
         return 'drupalTests';
     }
 
+    /**
+     * Excludes a usage from test code of a member declared outside it.
+     */
     public function shouldExclude(ClassMemberUsage $usage, Node $node, Scope $scope): bool
     {
         if (!$this->enabled) {
@@ -56,6 +65,8 @@ final class TestsUsageExcluder implements MemberUsageExcluder
     }
 
     /**
+     * Whether every file the usage comes from is test code.
+     *
      * @param non-empty-list<string> $files
      */
     private function allAreTestCode(array $files): bool

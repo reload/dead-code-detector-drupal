@@ -16,6 +16,9 @@ use ShipMonk\PHPStan\DeadCode\Provider\VirtualUsageData;
  */
 final class HttpExceptionHandlerUsageProvider extends ReflectionBasedMemberUsageProvider
 {
+    /**
+     * The handlers that onException() reaches by name.
+     */
     protected function shouldMarkMethodAsUsed(ReflectionMethod $method): ?VirtualUsageData
     {
         return HttpExceptionHandlers::isHandler($method)

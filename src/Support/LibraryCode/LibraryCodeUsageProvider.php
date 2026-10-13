@@ -40,12 +40,18 @@ use function sprintf;
  */
 final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
 {
+    /**
+     * Reflection reaches library traits that no analysed class uses.
+     */
     public function __construct(
         private readonly LibraryPaths $libraryPaths,
         private readonly ReflectionProvider $reflectionProvider,
     ) {
     }
 
+    /**
+     * The base's usages, and every member of a library trait.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         // The base sees a trait only as part of the classes using it, so a
@@ -59,31 +65,51 @@ final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
         return parent::getUsages($node, $scope);
     }
 
+    /**
+     * Used when a library package declares it, or a method it overrides or
+     * implements.
+     */
     protected function shouldMarkMethodAsUsed(ReflectionMethod $method): ?VirtualUsageData
     {
         return $this->findLibraryUsage($method);
     }
 
+    /**
+     * Used when a library package declares it, or a constant it overrides.
+     */
     protected function shouldMarkConstantAsUsed(ReflectionClassConstant $constant): ?VirtualUsageData
     {
         return $this->findLibraryUsage($constant);
     }
 
+    /**
+     * Used when a library package declares its enum.
+     */
     protected function shouldMarkEnumCaseAsUsed(ReflectionEnumUnitCase $enumCase): ?VirtualUsageData
     {
         return $this->findLibraryUsage($enumCase);
     }
 
+    /**
+     * Read when a library package declares it, or a property it redeclares.
+     */
     protected function shouldMarkPropertyAsRead(ReflectionProperty $property): ?VirtualUsageData
     {
         return $this->findLibraryUsage($property);
     }
 
+    /**
+     * Written when a library package declares it, or a property it redeclares.
+     */
     protected function shouldMarkPropertyAsWritten(ReflectionProperty $property): ?VirtualUsageData
     {
         return $this->findLibraryUsage($property);
     }
 
+    /**
+     * Searches the member's class, interfaces and traits, then its parents',
+     * for one a library package declares.
+     */
     private function findLibraryUsage(
         ReflectionMethod|ReflectionClassConstant|ReflectionProperty $member,
     ): ?VirtualUsageData {
@@ -109,6 +135,9 @@ final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
     }
 
     /**
+     * The package of the ancestor, if it declares the member and is not built
+     * into PHP.
+     *
      * @param ReflectionClass<object> $ancestor
      */
     private function findLibraryPackageDeclaring(
@@ -130,6 +159,8 @@ final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
     }
 
     /**
+     * The package installed where the class's file is, if any.
+     *
      * @param ReflectionClass<*> $class
      */
     private function packageOf(ReflectionClass $class): ?string
@@ -140,6 +171,8 @@ final class LibraryCodeUsageProvider extends ReflectionBasedMemberUsageProvider
     }
 
     /**
+     * Every member of the trait, if a library package declares it.
+     *
      * @param ReflectionClass<*> $trait
      * @return list<ClassMemberUsage>
      */

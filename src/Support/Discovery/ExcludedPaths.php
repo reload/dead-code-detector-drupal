@@ -16,6 +16,8 @@ use function strpbrk;
 final class ExcludedPaths
 {
     /**
+     * Without paths, it excludes nothing.
+     *
      * @param list<string> $excludedPaths
      *   Absolute paths or fnmatch patterns.
      * @phpstan-pure
@@ -26,6 +28,8 @@ final class ExcludedPaths
     }
 
     /**
+     * Both of PHPStan's lists: either keeps a file from being analysed.
+     *
      * @param array{analyse?: list<string>, analyseAndScan?: list<string>} $excludePathsParameter
      *   PHPStan's %excludePaths%, in the shape its parameter schema enforces.
      * @phpstan-pure
@@ -38,6 +42,9 @@ final class ExcludedPaths
         ]);
     }
 
+    /**
+     * Whether PHPStan excludes the file.
+     */
     public function contains(string $filePath): bool
     {
         $filePath = Path::canonicalize($filePath);

@@ -35,6 +35,8 @@ final class SandboxPolicy
     private const DEFAULT_ALLOWED_PREFIXES = ['get', 'has', 'is'];
 
     /**
+     * Takes the lists as given; fromSettings() falls back to core's defaults.
+     *
      * @param list<string> $allowedClasses
      * @param list<string> $allowedMethods
      * @param list<string> $allowedPrefixes
@@ -63,6 +65,10 @@ final class SandboxPolicy
         );
     }
 
+    /**
+     * Whether a template may call the method: by its name, its prefix,
+     * #[TwigAllowed] or its class.
+     */
     public function allows(ReflectionMethod $method): bool
     {
         if (in_array($method->getName(), $this->allowedMethods, true)) {
@@ -85,6 +91,9 @@ final class SandboxPolicy
     }
 
     /**
+     * Whether the class, or a type it extends or implements, has every method
+     * allowed.
+     *
      * @param ReflectionClass<object> $class
      */
     private function isAllowedClass(ReflectionClass $class): bool

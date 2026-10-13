@@ -3,6 +3,8 @@
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
     <arg value="sp"/>
+    <!-- Composer's PHPCS installer plugin is off, so the standard is registered here. -->
+    <config name="installed_paths" value="vendor/slevomat/coding-standard"/>
 
     <file>src</file>
     <file>tests</file>
@@ -11,4 +13,24 @@
     <exclude-pattern>tests/*/data/*</exclude-pattern>
 
     <rule ref="PSR12"/>
+
+    <!-- A description on every class and method; types say the rest, so no tags are required. Tests are named after the cases they prove. -->
+    <rule ref="PEAR.Commenting.ClassComment.Missing">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Commenting.DocComment.MissingShort">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <!-- An override says what it does here, which its parent cannot. -->
+    <rule ref="SlevomatCodingStandard.Commenting.ForbiddenComments">
+        <properties>
+            <property name="forbiddenCommentPatterns" type="array">
+                <element value="~\{@inheritDoc\}~i"/>
+            </property>
+        </properties>
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
 </ruleset>

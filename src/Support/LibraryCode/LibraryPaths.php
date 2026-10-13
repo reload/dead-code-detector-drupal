@@ -24,6 +24,9 @@ use function substr;
 final class LibraryPaths
 {
     /**
+     * Private, so every directory is canonical: fromDirectories() makes them
+     * so.
+     *
      * @param array<string, string> $packageNameByDirectory
      *   Canonical, non-empty directories.
      * @phpstan-pure
@@ -34,6 +37,8 @@ final class LibraryPaths
     }
 
     /**
+     * Canonicalises the directories, so lookups compare like with like.
+     *
      * @param array<string, string> $packageNameByDirectory
      * @phpstan-pure
      */
@@ -51,6 +56,10 @@ final class LibraryPaths
         return new self($packageNameByCanonicalDirectory);
     }
 
+    /**
+     * The packages Composer installed, under both their install paths and the
+     * real directories behind them.
+     */
     public static function read(): self
     {
         $libraryPaths = self::parse(InstalledVersions::getAllRawData());
@@ -67,6 +76,9 @@ final class LibraryPaths
     }
 
     /**
+     * Every package's install path but the root package's, which holds the
+     * analysed code.
+     *
      * @param array<mixed> $installedData
      *   Datasets as returned by InstalledVersions::getAllRawData().
      * @phpstan-pure

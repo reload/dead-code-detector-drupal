@@ -9,6 +9,9 @@ use Symfony\Component\Yaml\Yaml;
 
 use function is_array;
 
+/**
+ * Drupal's YAML files, custom tags such as !tagged_iterator included.
+ */
 final class YamlDocument
 {
     /**
