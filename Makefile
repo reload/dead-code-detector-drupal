@@ -43,7 +43,7 @@ MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
 
 # Parallel: rule-test.neon turns off dead-code-detector's on-disk usage cache, where parallel runs collide.
 test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test the decision classes (Infection, in Docker; MUTATE= limits it to files).
-	$(PHP_RUNNER) vendor/bin/infection --threads=max --show-mutations=max --no-progress $(MUTATE)
+	$(PHP_RUNNER) vendor/bin/infection --threads=max --show-mutations=max --log-verbosity=all --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).
 	vendor/bin/phpcbf
