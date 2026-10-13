@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       versions: ${{ steps.range.outputs.version }}
-      highest: ${{ steps.range.outputs.highest }}
+      lowest: ${{ steps.range.outputs.lowest }}
     steps:
       - uses: actions/checkout@v7
       - id: range
@@ -74,7 +74,7 @@ jobs:
       - name: Setup PHP, with composer and pcov
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ needs.php-versions.outputs.highest }}
+          php-version: ${{ needs.php-versions.outputs.lowest }}
           tools: composer
           coverage: pcov
 
