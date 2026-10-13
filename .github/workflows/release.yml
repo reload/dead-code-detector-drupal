@@ -2,8 +2,6 @@
 name: Release
 on:
   push:
-    branches:
-      - main
 
 permissions:
   contents: write
@@ -11,11 +9,13 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: release
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   release:
+    name: Release
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -33,6 +33,7 @@ jobs:
       # here. The plugins come from .releaserc.json: the action's skip_npm_plugin
       # input would replace that list with its own.
       - name: Release
+        id: release
         uses: cycjimmy/semantic-release-action@v8
         with:
           semantic_version: 25
@@ -44,3 +45,68 @@ jobs:
           # A token with bypass rights on the main ruleset; the release
           # commit is pushed straight to main.
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+
+      - name: Summarise
+        env:
+          PUBLISHED: ${{ steps.release.outputs.new_release_published }}
+          VERSION: ${{ steps.release.outputs.new_release_version }}
+          NOTES: ${{ steps.release.outputs.new_release_notes }}
+          VERB: Released
+        # The action sets no outputs when there is no release, so the last one
+        # comes from the tags.
+        run: |
+          if [ "$PUBLISHED" = "true" ]; then
+            printf '## %s %s\n\n%s\n' "$VERB" "$VERSION" "$NOTES" >> "$GITHUB_STEP_SUMMARY"
+          else
+            last=$(git describe --tags --abbrev=0 2>/dev/null || echo none)
+            printf '## %s nothing\n\nThe last release is %s.\n' "$VERB" "$last" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  # What a branch would release if merged, from the same configuration: the
+  # loaded plugins and the next version, or that there is none.
+  dry-run:
+    name: Release dry run
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      # semantic-release verifies push access even when it publishes nothing.
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Dry run
+        id: release
+        uses: cycjimmy/semantic-release-action@v8
+        with:
+          semantic_version: 25
+          dry_run: true
+          # Otherwise semantic-release stops at "configured to publish from main".
+          branches: ${{ github.ref_name }}
+          extra_plugins: |
+            @semantic-release/changelog@7
+            @semantic-release/git@11
+            conventional-changelog-conventionalcommits@9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summarise
+        env:
+          PUBLISHED: ${{ steps.release.outputs.new_release_published }}
+          VERSION: ${{ steps.release.outputs.new_release_version }}
+          NOTES: ${{ steps.release.outputs.new_release_notes }}
+          VERB: A merge would release
+        # The action sets no outputs when there is no release, so the last one
+        # comes from the tags.
+        run: |
+          if [ "$PUBLISHED" = "true" ]; then
+            printf '## %s %s\n\n%s\n' "$VERB" "$VERSION" "$NOTES" >> "$GITHUB_STEP_SUMMARY"
+          else
+            last=$(git describe --tags --abbrev=0 2>/dev/null || echo none)
+            printf '## %s nothing\n\nThe last release is %s.\n' "$VERB" "$last" >> "$GITHUB_STEP_SUMMARY"
+          fi
