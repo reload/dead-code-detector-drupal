@@ -60,6 +60,9 @@ final class DrupalCallables
     }
 
     /**
+     * Declares the method a callable definition names, and the constructor when
+     * the class resolver instantiates its class.
+     *
      * @phpstan-pure
      */
     public static function declare(
@@ -95,6 +98,8 @@ final class DrupalCallables
     }
 
     /**
+     * Declares the method and the constructor the class resolver calls first.
+     *
      * @phpstan-pure
      */
     private static function constructedAndCalled(

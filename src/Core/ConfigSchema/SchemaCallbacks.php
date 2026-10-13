@@ -25,6 +25,9 @@ final class SchemaCallbacks
 {
     private ?DeclaredUsages $declaredUsages = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
     ) {
@@ -39,6 +42,8 @@ final class SchemaCallbacks
     }
 
     /**
+     * The callbacks each schema file names, declared on their classes.
+     *
      * @param array<string, string> $yamlByFilePath
      * @phpstan-pure
      */
@@ -56,6 +61,9 @@ final class SchemaCallbacks
     }
 
     /**
+     * Searches the schema at any depth, as Callback constraints may sit on any
+     * element.
+     *
      * @param array<mixed> $schema
      * @return list<array{string, string}>
      * @phpstan-pure

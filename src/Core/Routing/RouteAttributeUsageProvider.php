@@ -28,6 +28,10 @@ use function array_map;
  */
 final class RouteAttributeUsageProvider implements MemberUsageProvider
 {
+    /**
+     * The constructor of a controller that core's attribute discovery finds
+     * routes on.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         // @phpstan-ignore phpstanApi.instanceofAssumption
@@ -53,6 +57,8 @@ final class RouteAttributeUsageProvider implements MemberUsageProvider
     }
 
     /**
+     * Whether core's attribute discovery finds routes on the class.
+     *
      * @param ReflectionClass<*> $class
      */
     private static function declaresRoutes(ReflectionClass $class): bool
@@ -73,6 +79,8 @@ final class RouteAttributeUsageProvider implements MemberUsageProvider
     }
 
     /**
+     * The attributes' class names.
+     *
      * @param list<ReflectionAttribute<object>> $attributes
      * @return list<string>
      */

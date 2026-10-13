@@ -17,16 +17,25 @@ use Reload\DeadCodeDetectorDrupal\Support\Reflection\MethodsCalledByNameUsagePro
  */
 final class RestResourceUsageProvider extends MethodsCalledByNameUsageProvider
 {
+    /**
+     * Every REST resource plugin implements it, whatever base class it extends.
+     */
     protected function typeName(): string
     {
         return ResourceInterface::class;
     }
 
+    /**
+     * The HTTP methods, lowercased as RequestHandler calls them.
+     */
     protected function methodNames(): array
     {
         return ['head', 'get', 'post', 'put', 'delete', 'trace', 'options', 'connect', 'patch'];
     }
 
+    /**
+     * Names RequestHandler as the caller.
+     */
     protected function note(): string
     {
         return 'REST resource method for an HTTP method, called by RequestHandler';

@@ -13,6 +13,8 @@ use function strtolower;
 final class TemplateAccesses
 {
     /**
+     * Built by TwigTemplates::parse().
+     *
      * @param array<string, non-empty-list<string>> $templatePathsByName
      *   Lowercased accessed name => templates accessing it.
      * @phpstan-pure
@@ -33,6 +35,8 @@ final class TemplateAccesses
     }
 
     /**
+     * Every name accessed, lowercased.
+     *
      * @return list<string>
      */
     public function accessedNames(): array

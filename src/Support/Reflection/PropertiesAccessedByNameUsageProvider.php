@@ -21,8 +21,9 @@ use function in_array;
 abstract class PropertiesAccessedByNameUsageProvider extends ReflectionBasedMemberUsageProvider
 {
     /**
+     * Class name => whether library code accesses its properties.
+     *
      * @var array<string, bool>
-     *   Class name => whether library code accesses its properties.
      */
     private array $accessesPropertiesByClassName = [];
 
@@ -32,6 +33,8 @@ abstract class PropertiesAccessedByNameUsageProvider extends ReflectionBasedMemb
     abstract protected function typeName(): string;
 
     /**
+     * Whether library code reads the properties, writes them, or both.
+     *
      * @return list<AccessType::*>
      */
     abstract protected function accessTypes(): array;
@@ -51,16 +54,25 @@ abstract class PropertiesAccessedByNameUsageProvider extends ReflectionBasedMemb
         return true;
     }
 
+    /**
+     * Read when library code reads the properties of its class.
+     */
     protected function shouldMarkPropertyAsRead(ReflectionProperty $property): ?VirtualUsageData
     {
         return $this->propertyUsage($property, AccessType::READ);
     }
 
+    /**
+     * Written when library code writes the properties of its class.
+     */
     protected function shouldMarkPropertyAsWritten(ReflectionProperty $property): ?VirtualUsageData
     {
         return $this->propertyUsage($property, AccessType::WRITE);
     }
 
+    /**
+     * The usage, if library code accesses the property this way.
+     */
     private function propertyUsage(ReflectionProperty $property, AccessType $accessType): ?VirtualUsageData
     {
         if (!in_array($accessType, $this->accessTypes(), true) || !ReachableProperties::includes($property)) {

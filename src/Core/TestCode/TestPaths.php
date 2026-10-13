@@ -22,11 +22,15 @@ use function substr;
 final class TestPaths
 {
     /**
+     * Canonical, to compare with canonical file paths.
+     *
      * @var list<string>
      */
     private readonly array $analysedPaths;
 
     /**
+     * Canonicalises the analysed paths once, rather than for every file it checks.
+     *
      * @param list<string> $analysedPaths
      */
     public function __construct(array $analysedPaths)
@@ -34,6 +38,9 @@ final class TestPaths
         $this->analysedPaths = array_map(Path::canonicalize(...), $analysedPaths);
     }
 
+    /**
+     * Whether the file is test code.
+     */
     public function contains(string $filePath): bool
     {
         $filePath = Path::canonicalize($filePath);

@@ -26,6 +26,10 @@ use function in_array;
  */
 final class ActionMethodUsageProvider implements MemberUsageProvider
 {
+    /**
+     * The action methods of a concrete config entity class, its parents'
+     * included.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         // @phpstan-ignore phpstanApi.instanceofAssumption

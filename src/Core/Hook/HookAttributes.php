@@ -33,6 +33,8 @@ final class HookAttributes
     ];
 
     /**
+     * Whether the attribute makes a method a hook implementation.
+     *
      * @phpstan-pure
      */
     public static function isMethodHook(string $attributeName): bool
@@ -51,6 +53,9 @@ final class HookAttributes
     }
 
     /**
+     * The hook the attribute implements, for the usage's note; "?" where its
+     * arguments do not say.
+     *
      * @param array<mixed> $arguments
      *   The attribute's arguments, keyed by name or position.
      * @phpstan-pure

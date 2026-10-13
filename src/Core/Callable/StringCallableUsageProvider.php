@@ -42,12 +42,20 @@ use function substr;
  */
 final class StringCallableUsageProvider implements MemberUsageProvider
 {
+    /**
+     * Service ids resolve through the service wiring, class names through
+     * PHPStan's reflection.
+     */
     public function __construct(
         private readonly ServiceDefinitions $services,
         private readonly ReflectionProvider $reflectionProvider,
     ) {
     }
 
+    /**
+     * Usages of the methods a string literal, or a concatenation building one,
+     * names.
+     */
     public function getUsages(Node $node, Scope $scope): array
     {
         $callees = match (true) {
@@ -64,6 +72,8 @@ final class StringCallableUsageProvider implements MemberUsageProvider
     }
 
     /**
+     * The methods a literal string names, if it is a callable Drupal resolves.
+     *
      * @return list<ClassMethodRef<string, string>>
      */
     private function resolveString(string $callable, Scope $scope): array

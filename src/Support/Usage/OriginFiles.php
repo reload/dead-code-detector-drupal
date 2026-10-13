@@ -17,16 +17,23 @@ use WeakMap;
 final class OriginFiles
 {
     /**
+     * Weak, so usages dead-code-detector drops take their files with them.
+     *
      * @var WeakMap<ClassMemberUsage, non-empty-list<string>>
      */
     private readonly WeakMap $originFilesByUsage;
 
+    /**
+     * Starts with no files recorded.
+     */
     public function __construct()
     {
         $this->originFilesByUsage = new WeakMap();
     }
 
     /**
+     * Notes which files declare the usage, for the tests excluder.
+     *
      * @param non-empty-list<string> $originFiles
      *   Each of them declares the usage.
      */
@@ -36,6 +43,8 @@ final class OriginFiles
     }
 
     /**
+     * The files the usage came from; null for usages in PHP.
+     *
      * @return non-empty-list<string>|null
      */
     public function find(ClassMemberUsage $usage): ?array

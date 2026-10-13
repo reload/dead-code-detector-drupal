@@ -13,6 +13,8 @@ use Reload\DeadCodeDetectorDrupal\Support\DeclaredUsage\DeclaredUsages;
 final class ServiceWiring
 {
     /**
+     * Built by ServiceDefinitions::parse().
+     *
      * @param array<string, string> $classByServiceId
      * @phpstan-pure
      */
@@ -23,6 +25,8 @@ final class ServiceWiring
     }
 
     /**
+     * The class of the service, or of the one an alias names.
+     *
      * @phpstan-pure
      */
     public function classOf(string $serviceId): ?string
@@ -30,6 +34,9 @@ final class ServiceWiring
         return $this->classByServiceId[$serviceId] ?? null;
     }
 
+    /**
+     * The methods the container calls.
+     */
     public function declaredUsages(): DeclaredUsages
     {
         return $this->declaredUsages;

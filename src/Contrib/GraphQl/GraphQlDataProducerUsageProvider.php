@@ -14,16 +14,25 @@ use Reload\DeadCodeDetectorDrupal\Support\Reflection\MethodsCalledByNameUsagePro
  */
 final class GraphQlDataProducerUsageProvider extends MethodsCalledByNameUsageProvider
 {
+    /**
+     * Named as a string, as the GraphQL module may not be installed.
+     */
     protected function typeName(): string
     {
         return 'Drupal\graphql\Plugin\DataProducerPluginInterface';
     }
 
+    /**
+     * resolve(), whose parameters vary per producer.
+     */
     protected function methodNames(): array
     {
         return ['resolve'];
     }
 
+    /**
+     * Names resolveField() as the caller.
+     */
     protected function note(): string
     {
         return 'GraphQL data producer, resolved by DataProducerPluginBase::resolveField()';

@@ -21,6 +21,8 @@ final class DrushCommandClasses
     private const BASE_CLASS = 'Drush\Commands\DrushCommands';
 
     /**
+     * Whether Drush instantiates the class as a command class.
+     *
      * @param ReflectionClass<*> $class
      * @phpstan-pure
      */

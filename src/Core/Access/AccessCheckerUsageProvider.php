@@ -16,16 +16,26 @@ use Reload\DeadCodeDetectorDrupal\Support\Reflection\MethodsCalledByNameUsagePro
  */
 final class AccessCheckerUsageProvider extends MethodsCalledByNameUsageProvider
 {
+    /**
+     * The marker interface of access checkers.
+     */
     protected function typeName(): string
     {
         return AccessInterface::class;
     }
 
+    /**
+     * AccessManager's default; a tag naming another method is read from the
+     * service wiring.
+     */
     protected function methodNames(): array
     {
         return ['access'];
     }
 
+    /**
+     * Names AccessManager as the caller.
+     */
     protected function note(): string
     {
         return 'Access checker, called by AccessManager';

@@ -37,6 +37,9 @@ final class RouteDefinitions
 
     private ?DeclaredUsages $declaredUsages = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
         private readonly ServiceDefinitions $services,
@@ -55,6 +58,9 @@ final class RouteDefinitions
     }
 
     /**
+     * The controllers, title callbacks, access callbacks and route callbacks
+     * each routing file names.
+     *
      * @param array<string, string> $yamlByFilePath
      * @phpstan-pure
      */

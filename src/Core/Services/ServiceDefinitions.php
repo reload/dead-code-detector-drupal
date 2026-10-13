@@ -33,6 +33,9 @@ final class ServiceDefinitions
 {
     private ?ServiceWiring $wiring = null;
 
+    /**
+     * Reads nothing until first use.
+     */
     public function __construct(
         private readonly DrupalFiles $drupalFiles,
     ) {
@@ -47,12 +50,15 @@ final class ServiceDefinitions
     }
 
     /**
+     * Each service's class, and the methods the container calls on it: the
+     * constructor, calls, tag methods, factories and configurators. Aliases and
+     * parents are followed across files.
+     *
      * @param array<string, string> $yamlByFilePath
      * @phpstan-pure
      */
     public static function parse(array $yamlByFilePath): ServiceWiring
     {
-        /** @var array<string, array{array<mixed>, string}> $definitions */
         $definitions = [];
         $aliasTargetById = [];
         foreach ($yamlByFilePath as $filePath => $yaml) {
@@ -128,6 +134,8 @@ final class ServiceDefinitions
     }
 
     /**
+     * The service definitions in one file, keyed by id.
+     *
      * @return array<string, mixed>
      * @phpstan-pure
      */
@@ -169,6 +177,9 @@ final class ServiceDefinitions
     }
 
     /**
+     * The class of a service: its own, its parent's, or its id when that is a
+     * class name.
+     *
      * @param array<string, array{array<mixed>, string}> $definitions
      * @param array<string, true> $visited
      * @phpstan-pure
@@ -197,6 +208,8 @@ final class ServiceDefinitions
     }
 
     /**
+     * The methods "calls" names, in each notation Symfony accepts.
+     *
      * @return list<string>
      * @phpstan-pure
      */
@@ -280,6 +293,9 @@ final class ServiceDefinitions
     }
 
     /**
+     * The class and method a factory or configurator names, if its class is
+     * known.
+     *
      * @param array<string, string> $classByServiceId
      * @return array{string, string}|null
      * @phpstan-pure
@@ -308,6 +324,8 @@ final class ServiceDefinitions
     }
 
     /**
+     * Tells class names from service ids and parameters.
+     *
      * @phpstan-pure
      */
     private static function isClassName(string $name): bool
