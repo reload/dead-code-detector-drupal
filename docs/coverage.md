@@ -186,6 +186,6 @@ The rows marked **not covered**, in order of what they cost:
 Callers outside Drupal's wiring, such as Symfony's serializer and graphql-php,
 are [known limitations](../README.md#callers-outside-drupals-wiring).
 
-[docs]: https://www.drupal.org/docs/drupal-apis
+[docs]: https://www.drupal.org/docs/develop/drupal-apis
 [form-routes]: https://www.drupal.org/project/drupal/issues/3584793
 [drush]: https://www.drush.org/13.x/
