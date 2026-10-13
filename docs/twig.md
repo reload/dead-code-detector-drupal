@@ -108,7 +108,7 @@ Switching Twig matching off on every benchmark corpus (2026-10-05) changes
 almost nothing:
 
 | Corpus | Templates | Distinct names accessed | Members only Twig keeps alive |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | dpl-web | 193 | 130 | 1, a coincidental match |
 | Canvas | 114 | 14 | 0 |
 

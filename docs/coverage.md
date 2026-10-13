@@ -28,7 +28,7 @@ How to read the tables:
 ## Services and dependency injection
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `*.services.yml`: `class`, `arguments`, `autowire` | the constructor, by the container | `Core\Services\ServiceUsageProvider` | `Core/Services` |
 | `factory`, `calls`, `configurator` | the named methods | `Core\Services\ServiceUsageProvider` | `Core/Services` |
 | tags `access_check` (`method`), `cache.context`, `service_collector` (`call`) | methods core calls without an interface | `Core\Services\ServiceUsageProvider` | `Core/Services` |
@@ -43,7 +43,7 @@ How to read the tables:
 ## Routing, menus and access
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `_controller`, `_title_callback`, `_custom_access` as `Class::method`, `service:method` or an invokable class | the method, and the constructor by the class resolver | `Core\Routing\RouteUsageProvider` | `Core/Routing`, `Core/Services` |
 | `_form` | the constructor; the form methods are overrides | `Core\Routing\RouteUsageProvider` | `Core/Routing` |
 | `route_callbacks` | the method | `Core\Routing\RouteUsageProvider` | `Core/Routing` |
@@ -57,7 +57,7 @@ How to read the tables:
 ## Hooks
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `#[Hook]` on a method, on a class with `method:`, or on a class with `__invoke()` | the method; the constructor, as the class becomes an autowired service | `Core\Hook\HookUsageProvider` | `Core/Hook` |
 | preprocess hooks (11.2), requirements hooks (11.2), hook classes in themes (11.3), Hux's `#[Hook]`, `#[Alter]` and `#[ReplaceOriginalHook]` | the same | `Core\Hook\HookUsageProvider` | `Core/Hook` |
 | `hook_theme()` `'initial preprocess'` (11.2) as `static::class . ':method'`, `'Class::method'` or `'service:method'` | the method | `Core\Callable\StringCallableUsageProvider` | `Core/Callable` |
@@ -68,7 +68,7 @@ How to read the tables:
 ## Form, Render, Ajax and Batch API callbacks
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `[$this, 'method']`, `[static::class, 'method']`, `[Foo::class, 'staticMethod']` in `#submit`, `#validate`, `#element_validate`, `#process`, `#after_build`, `#pre_render`, `#post_render`, `#lazy_builder`, `#access_callback`, `#ajax`, batch operations | the method | dead-code-detector | |
 | `'::method'`, `'Class::method'`, `'Class:method'`, `'service:method'`, `Foo::class . '::method'` in the same keys | the method, and the constructor when the class resolver instantiates the class for a non-static method | `Core\Callable\StringCallableUsageProvider` | `Core/Callable` |
 | `#[FormElement]` and `#[RenderElement]` plugins, `#value_callback` | `getInfo()`, `valueCallback()`, and the callbacks above | library rule; dead-code-detector | |
@@ -79,7 +79,7 @@ How to read the tables:
 ## Plugins
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | plugin classes: `build()`, `create()`, constructors overriding `PluginBase` | overrides | library rule; dead-code-detector | `Support/LibraryCode` |
 | custom attribute classes' properties | read by `AttributeBase::get()` | `Core\Plugin\PluginAttributePropertyUsageProvider` | `Core/Plugin` |
 | custom annotation classes' properties | written by the parser, defaults read by reflection | **not covered** | |
@@ -91,7 +91,7 @@ How to read the tables:
 ## Entities, fields and validation
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | entity classes: `baseFieldDefinitions()`, `preSave()`, `postLoad()` and the rest; bundle classes, with `#[Bundle]` (11.4) | static and instance overrides | library rule | |
 | handlers: list builders, access handlers, view builders, route providers, views data, storage | `createInstance()` and overrides | library rule; dead-code-detector | |
 | config entity properties, `config_export` | written on load, read on save | `Core\ConfigEntity\ConfigEntityPropertyUsageProvider` | `Core/ConfigEntity` |
@@ -105,7 +105,7 @@ How to read the tables:
 ## Configuration and recipes
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `*.schema.yml` `Callback` constraints | a static method | `Core\ConfigSchema\SchemaCallbackUsageProvider` | `Core/ConfigSchema`, `Core/Services` |
 | `*.schema.yml` `ClassResolver` constraint | `method` on a service or class | **not covered** | |
 | `#[ActionMethod]` | the method, from recipes' `config.actions` | `Core\ConfigAction\ActionMethodUsageProvider` | `Core/ConfigAction` |
@@ -114,7 +114,7 @@ How to read the tables:
 ## Theming and Twig
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | templates reading `foo.bar` and calling `foo.getBar()` within the sandbox | methods and public properties, by name | `Core\Twig\TwigUsageProvider` | `Core/Twig`, `Core/Settings` |
 | `twig_sandbox_allowed_*` in `settings.php` | which methods templates may call | `Core\Settings\SettingLists` | `Core/Settings` |
 | Twig extensions' `TwigFilter`, `TwigFunction`, `TwigTest` callables | the callables | dead-code-detector's Twig support | |
@@ -124,7 +124,7 @@ How to read the tables:
 ## Other APIs and contrib
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | REST resources' `get()`, `post()`, `patch()` and the other verbs | by the request method | `Core\Rest\RestResourceUsageProvider` | `Core/Rest` |
 | JSON:API Resources' `process()` | by name | `Contrib\JsonApi\JsonApiResourceUsageProvider` | `Contrib/JsonApi` |
 | GraphQL data producers' `resolve()` | by name | `Contrib\GraphQl\GraphQlDataProducerUsageProvider` | `Contrib/GraphQl` |
@@ -139,7 +139,7 @@ How to read the tables:
 ## Tests
 
 | Shape | Reaches | Covered by | Tests |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | test methods, data providers | | dead-code-detector's PHPUnit support | |
 | `$modules`, `$defaultTheme`, `$profile`, `$strictConfigSchema` | read by the base class | library rule | |
 | usages in `tests` directories | do not keep production code alive | `Core\TestCode\TestsUsageExcluder` | `Core/TestCode` |
