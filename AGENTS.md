@@ -21,8 +21,6 @@ it.
 - `CHANGELOG.md`: written by the release workflow from the commit messages.
   Do not edit it.
 
-Verify every URL before writing it down, with a request, not from memory.
-
 ## Architecture
 
 - `src/Core/<Mechanism>/` and `src/Contrib/<Mechanism>/`: one directory per

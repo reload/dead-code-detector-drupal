@@ -26,6 +26,13 @@ jobs:
       - uses: xt0rted/markdownlint-problem-matcher@v3
       - name: Run markdownlint
         run: make lint-markdown
+  links:
+    name: Links
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run lychee
+        run: make lint-links
   yamllint:
     name: Yamllint
     runs-on: ubuntu-24.04

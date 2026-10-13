@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: analyse-php checks dependencies-highest dependencies-lowest format-php help lint-actions lint-commits lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
+.PHONY: analyse-php checks dependencies-highest dependencies-lowest format-php help lint-actions lint-commits lint-links lint-markdown lint-php lint-yaml php-image test-coverage test-mutation test-php validate-composer
 
 vendor: composer.json
 	composer install --no-interaction
@@ -57,6 +57,12 @@ lint-markdown: ## Lint Markdown files, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/workdir davidanson/markdownlint-cli2:v0.18.1 \
 		$(shell git ls-files --cached --others --exclude-standard '*.md' ':!:CHANGELOG.md')
 
+# Every link in the Markdown, including the targets of fragments, resolves.
+lint-links: ## Check the links in Markdown files, like the CI "Lint" workflow does.
+	@docker run --rm -v "$(CURDIR)":/input -w /input lycheeverse/lychee:0.24.2 \
+		--no-progress --include-fragments --max-concurrency 4 \
+		$(shell git ls-files --cached --others --exclude-standard '*.md' ':!:CHANGELOG.md')
+
 # Conventional Commits, which the release workflow reads to pick the version. The
 # checkout belongs to another user than the container's, which git refuses unless told.
 BASE ?= origin/main
@@ -74,7 +80,7 @@ lint-yaml: ## Lint YAML files, like the CI "Lint" workflow does.
 lint-actions: ## Lint GitHub Actions workflows, like the CI "Lint" workflow does.
 	@docker run --rm -v "$(CURDIR)":/repo -w /repo rhysd/actionlint:1.7.7 -color
 
-checks: validate-composer lint-php analyse-php test-php lint-markdown lint-yaml lint-actions ## Run the checks CI runs on every PHP version; lint-commits needs a base.
+checks: validate-composer lint-php analyse-php test-php lint-markdown lint-links lint-yaml lint-actions ## Run the checks CI runs on every PHP version; lint-commits needs a base.
 
 help: ## Display a list of the public targets
 # Find lines that starts with a word-character, contains a colon and then a
