@@ -28,7 +28,7 @@ services:
       GIT_CONFIG_KEY_0: safe.directory
       GIT_CONFIG_VALUE_0: /app
   yamllint:
-    image: tmknom/yamllint:1.35.1
+    image: tmknom/yamllint:1.37.1
     volumes:
       - .:/data
     working_dir: /data
