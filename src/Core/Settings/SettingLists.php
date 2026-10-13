@@ -60,6 +60,7 @@ final class SettingLists
      * @param list<string> $settingNames
      * @return array<string, list<string>>
      *   Setting name => values, for the settings that any file assigns.
+     * @phpstan-pure
      */
     public static function parse(array $contents, array $settingNames): array
     {
@@ -80,6 +81,7 @@ final class SettingLists
     /**
      * @return list<array{string, list<string>}>
      *   Setting name and values of each literal assignment or append.
+     * @phpstan-pure
      */
     private static function assignments(string $fileContents): array
     {
@@ -116,6 +118,8 @@ final class SettingLists
 
     /**
      * The name in $settings['name'], if that is what the expression is.
+     *
+     * @phpstan-pure
      */
     private static function settingName(Expr $expr): ?string
     {
@@ -134,6 +138,7 @@ final class SettingLists
     /**
      * @return list<string>|null
      *   Null when any item is computed at runtime.
+     * @phpstan-pure
      */
     private static function literalList(Expr $expr): ?array
     {
@@ -155,6 +160,8 @@ final class SettingLists
 
     /**
      * A string literal, or a class name written as Foo::class.
+     *
+     * @phpstan-pure
      */
     private static function literalString(Expr $expr): ?string
     {

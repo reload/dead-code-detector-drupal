@@ -47,8 +47,10 @@ it.
 - Keep reading the world separate from deciding about it. A reader is a
   service the container builds from its sources and injects; it reads once,
   on first use. A decision is a static function of data, `parse()` included,
-  and carries `@phpstan-pure`, which PHPStan checks. Nothing static reads the
-  world, and unit tests must not need the filesystem.
+  and carries `@phpstan-pure`, which PHPStan checks. PHPStan has no purity
+  data for nikic/php-parser and Twig, so `phpstan.neon.dist` accepts the
+  parsers' calls to them. Nothing static reads the world, and unit tests must
+  not need the filesystem.
 - `tests/Architecture` holds the phpat rules PHPStan runs: `Support` depends
   on no Drupal area, `Contrib` builds on `Support` alone, and readers are
   built by the container only. dead-code-detector's rules name providers

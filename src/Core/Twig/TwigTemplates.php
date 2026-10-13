@@ -41,6 +41,7 @@ final class TwigTemplates
 
     /**
      * @param array<string, string> $sourceByTemplatePath
+     * @phpstan-pure
      */
     public static function parse(array $sourceByTemplatePath): TemplateAccesses
     {
@@ -60,6 +61,7 @@ final class TwigTemplates
      * Names after "." or "?." in the template's expressions.
      *
      * @return list<string>
+     * @phpstan-pure
      */
     private static function accessedNamesIn(Environment $environment, string $templatePath, string $source): array
     {
@@ -92,6 +94,8 @@ final class TwigTemplates
     /**
      * Twig 3.21 and later lex the dot as an operator, earlier versions as
      * punctuation.
+     *
+     * @phpstan-pure
      */
     private static function isAccessOperator(Token $token): bool
     {
