@@ -6,6 +6,7 @@ vendor: composer.json
 	@touch $@
 
 # The dependency sets the CI "PHP" workflow installs, for the same runs locally.
+# Later installs keep the set chosen until the other target runs.
 dependencies-highest: ## Update to the newest dependencies composer.json allows.
 	composer update --no-interaction --no-progress
 	@touch vendor
@@ -38,7 +39,9 @@ php-image: ## Build the image the Docker targets run in (see Dockerfile).
 test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit with pcov, in Docker).
 	$(PHP_RUNNER) vendor/bin/phpunit --coverage-text
 
-# The decision classes; AGENTS.md says why mutation testing stops there.
+# Decision classes only. Readers and providers are reached through rule tests
+# sharing one analysis, so Infection cannot tell which test observes a mutant
+# there and reports false escapes.
 MUTATE ?= $(shell grep -rl '@phpstan-pure' src | sort)
 
 # Parallel: rule-test.neon turns off dead-code-detector's on-disk usage cache, where parallel runs collide.
