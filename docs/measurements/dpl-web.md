@@ -55,7 +55,7 @@ A dpl-web maintainer then reviewed every finding: see the
 Findings in hand-written code, as providers were added:
 
 | Run | Providers | Findings | Removed |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 0 | dead-code-detector alone | 314 | |
 | 1 | + library code | 269 | 45 |
 | 2 | + `services.yml`, `routing.yml` | 147 | 122 |
@@ -112,7 +112,7 @@ plugin constructor or anything else plugin discovery explains: plugins have
 ## Classification of the 60 remaining findings
 
 | Kind | Findings | Real dead code | False positives | Precision |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Methods | 29 | 26 | 3 | 90% |
 | Properties never read | 23 | 19 | 4 | 83% |
 | Properties never written | 8 | 2 | 6 | 25% |
@@ -124,7 +124,7 @@ plugin constructor or anything else plugin discovery explains: plugins have
 None of the 13 is a Drupal mechanism that a provider is missing.
 
 | Cause | Findings | Remedy |
-|---|---|---|
+| --- | --- | --- |
 | A trait property that another declaration of the same property shadows: in a trait composing it, in the class using it, or in that class's parent. PHP merges the declarations into one property; dead-code-detector keeps them apart and attributes reads and writes to one of them. `FileTrait`'s `$entityTypeManager`, `$fileSystem` and `$fileRepository`, and `$entityTypeManager` in `ImageTrait`, `SoundTrait` and `EmbedVideoTrait` | 1 never read, 6 never written | Drop the redundant declarations; otherwise a dead-code-detector limitation |
 | graphql-php's default field resolver reads response objects' properties by field name (`ImportResponse`, `NewContentResponse`) | 3 never read | `@api` on the classes |
 | Symfony's serializer constructs `dpl_campaign`'s `Facet`, `FacetValue` and `Query` | 3 methods | Upstream in dead-code-detector's Symfony support; `@api` meanwhile |
@@ -215,7 +215,7 @@ On 2026-10-04 a developer who knows dpl-web reviewed all 54 findings, one at
 a time, with links to the code:
 
 | Verdict | Findings | Members |
-|---|---|---|
+| --- | --- | --- |
 | Real dead code | 23 | The 16 unused injected services (17 findings); `AbstractUserTokensProvider::__construct()`; `UserTokens::create()`; `VideoToolMediaLibraryAddForm::getSourceFieldDefinition()`; `DplPoCommands::$source` (2) and `::$destination` |
 | Unused, kept on purpose as API | 21 | `DplReactConfigInterface::getConfig()` and its 15 implementations; `Subscription::setTags()`, `::setCategories()`; `SubscriptionHelper::deleteWithContent()`; `LibraryAgencyIdProvider::getAgencyId()`, a service for modules webmaster sites may install; `MediaCleanup::getArchivedMediaIds()` |
 | Points to another problem | 3 | `ConsumerRole::delete()`: probably a missing call in `ConsumerHandler::delete()` (deferred). `ReservationSettings::enableSmsNotifications()`: `GeneralSettingsForm` should call it instead of writing the config key. `FileTrait::$entityTypeManager`: it is read, but `ImageTrait` and `SoundTrait` needlessly redeclare it. |

@@ -46,7 +46,7 @@ serve as labels.
 ## Runs
 
 | | dead-code-detector alone | With this package |
-|---|---|---|
+| --- | --- | --- |
 | All findings | 468 | 61 |
 | Removed by Canvas (real dead code) | 24 | 24 |
 | Ignored inline by Canvas | 5 | 4 |
@@ -71,7 +71,7 @@ Canvas uses Drupal mechanisms that dpl-web barely does, and this benchmark
 exposed them:
 
 | Mechanism | Findings | Change |
-|---|---|---|
+| --- | --- | --- |
 | Config entity properties, written by `ConfigEntityBase::__construct()` and read by `toArray()` | ~38 | Config entity property provider |
 | Validation constraint options, written by `Constraint::__construct()` | ~16 | Constraint property provider |
 | Plugin attribute properties, read by `AttributeBase::get()` | ~8 | Plugin attribute property provider |
