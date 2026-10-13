@@ -16,16 +16,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # The PHP versions composer.json allows, so the matrix follows its constraint.
+  php-versions:
+    name: PHP versions
+    runs-on: ubuntu-24.04
+    outputs:
+      versions: ${{ steps.range.outputs.version }}
+      highest: ${{ steps.range.outputs.highest }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: range
+        uses: WyriHaximus/github-action-composer-php-versions-in-range@v2
+
   php:
     name: PHP ${{ matrix.php }}, ${{ matrix.dependencies }} dependencies
+    needs: php-versions
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        php:
-          - '8.3'
-          - '8.4'
-          - '8.5'
+        php: ${{ fromJson(needs.php-versions.outputs.versions) }}
         dependencies:
           - lowest
           - highest
@@ -56,6 +66,7 @@ jobs:
 
   mutation:
     name: Mutation
+    needs: php-versions
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -63,7 +74,7 @@ jobs:
       - name: Setup PHP, with composer and pcov
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: ${{ needs.php-versions.outputs.highest }}
           tools: composer
           coverage: pcov
 

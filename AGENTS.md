@@ -129,7 +129,8 @@ Caveats not obvious from the command list:
   there and reports false escapes.
 - `dependencies-lowest` and `dependencies-highest` rewrite `vendor/` and the
   ignored `composer.lock` with the oldest and the newest versions
-  composer.json allows, which CI tests on PHP 8.3 to 8.5. Later installs keep
-  that set until `make dependencies-highest` restores the newest.
+  composer.json allows, which CI tests on every PHP version composer.json
+  allows. Later installs keep that set until `make dependencies-highest`
+  restores the newest.
 
 [dcd]: https://github.com/shipmonk-rnd/dead-code-detector
