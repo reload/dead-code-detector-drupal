@@ -1,8 +1,8 @@
 # Dead code detector for Drupal
 
-[shipmonk/dead-code-detector][dcd] extension that teaches it how Drupal calls
-code, so it reports dead class members in your custom modules, themes and
-profiles rather than Drupal's wiring.
+A [dead-code-detector][dcd] extension that teaches it how Drupal calls code,
+so it reports dead class members in your custom modules, themes and profiles
+rather than Drupal's wiring.
 
 ## Summary
 
