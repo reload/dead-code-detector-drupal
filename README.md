@@ -302,6 +302,11 @@ when the mechanism belongs in this package instead.
   which dead-code-detector does not analyse.
 - Tests are a directory named `tests` below an analysed path; a test module
   elsewhere counts as production code.
+- This package does not read which extensions a site installs, so a hook or
+  plugin for a module missing from `core.extension.yml` still counts as used.
+  On the sites measured, such code was deleted together with the module.
+  Detecting leftovers is not worth the added complexity of reading
+  configuration and mapping each hook to the module that defines it.
 
 ### Not covered yet
 
