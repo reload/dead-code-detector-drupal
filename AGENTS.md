@@ -88,7 +88,7 @@ of here.
    and the drupal.org page or change record that documents it.
 2. Wiring files get a reader and a static `parse()`; conventions get a
    reflection-based provider, on the calls-by-name bases where they fit.
-3. Register it in `extension.neon`, readers with `autowired: false`.
+3. Register it in `extension.neon`.
 4. Tests: unit tests for the decision, and a rule test with fixtures in
    `Drupal\example\<Mechanism>` added to `tests/fixtures.neon`. A fixture
    class in a classmap-loaded file needs `composer dump-autoload`.

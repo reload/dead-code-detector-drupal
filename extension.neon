@@ -23,12 +23,10 @@ services:
             Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter(%excludePaths%),
             %drupalDeadCode.twigTemplates.enabled%
         )
-        autowired: false
 
     drupalDeadCode.settingsFiles:
         type: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles
         factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\SettingsFiles::find(%drupalDeadCode.twigTemplates.enabled%)
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFilesResultCacheMetaExtension
@@ -41,7 +39,6 @@ services:
     drupalDeadCode.libraryPaths:
         type: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths
         factory: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryPaths::read()
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Support\LibraryCode\LibraryCodeUsageProvider
@@ -52,13 +49,11 @@ services:
 
     drupalDeadCode.originFiles:
         class: Reload\DeadCodeDetectorDrupal\Support\Usage\OriginFiles
-        autowired: false
 
     drupalDeadCode.serviceDefinitions:
         class: Reload\DeadCodeDetectorDrupal\Core\Services\ServiceDefinitions
         arguments:
             drupalFiles: @drupalDeadCode.drupalFiles
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\Services\ServiceUsageProvider
@@ -73,7 +68,6 @@ services:
         arguments:
             drupalFiles: @drupalDeadCode.drupalFiles
             services: @drupalDeadCode.serviceDefinitions
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\Routing\RouteUsageProvider
@@ -92,7 +86,6 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\ConfigSchema\SchemaCallbacks
         arguments:
             drupalFiles: @drupalDeadCode.drupalFiles
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\ConfigSchema\SchemaCallbackUsageProvider
@@ -107,7 +100,6 @@ services:
         arguments:
             drupalFiles: @drupalDeadCode.drupalFiles
             services: @drupalDeadCode.serviceDefinitions
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\Permission\PermissionCallbackUsageProvider
@@ -183,19 +175,16 @@ services:
         class: Reload\DeadCodeDetectorDrupal\Core\Settings\SettingLists
         arguments:
             settingsFiles: @drupalDeadCode.settingsFiles
-        autowired: false
 
     drupalDeadCode.templates:
         class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigTemplates
         arguments:
             drupalFiles: @drupalDeadCode.drupalFiles
-        autowired: false
 
     drupalDeadCode.twigSandbox:
         class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigSandbox
         arguments:
             settingLists: @drupalDeadCode.settingLists
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\Twig\TwigUsageProvider
@@ -209,7 +198,6 @@ services:
     drupalDeadCode.testPaths:
         type: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths
         factory: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestPaths(%analysedPaths%)
-        autowired: false
 
     -
         class: Reload\DeadCodeDetectorDrupal\Core\TestCode\TestsUsageExcluder
