@@ -10,9 +10,11 @@ use WeakMap;
 /**
  * Files that usages declared outside PHP come from: wiring YAML, templates.
  *
- * Shipmonk's virtual usages carry no file, so providers record their files
- * here, and the tests excluder, which dead-code-detector hands the same usage objects,
- * reads them back.
+ * dead-code-detector's virtual usages carry no file, and its public way to
+ * make a regular origin needs a PHP node; the constructor that could name any
+ * file is internal. So providers record their files here, and the tests
+ * excluder, which dead-code-detector hands the same usage objects, reads them
+ * back.
  */
 final class OriginFiles
 {

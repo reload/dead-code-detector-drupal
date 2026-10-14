@@ -23,6 +23,11 @@ use function substr;
 /**
  * Services declared in *.services.yml, and the methods the container calls.
  *
+ * Read from the YAML rather than taken from phpstan-drupal's ServiceMap, which
+ * drops calls, tags, factories, configurators and the file a service came
+ * from. The map is also static state, filled at bootstrap and due to change;
+ * not building on it keeps an upstream move possible.
+ *
  * @see \Drupal\Core\DependencyInjection\YamlFileLoader
  * @see \Drupal\Core\DependencyInjection\Compiler\TaggedHandlersPass
  * @see \Drupal\Core\DependencyInjection\Compiler\RegisterAccessChecksPass
