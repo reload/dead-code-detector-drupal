@@ -83,4 +83,4 @@ jobs:
 
       # On the runner's own PHP, so Infection's annotations point at the files.
       - name: Mutation-test all but providers and excluders
-        run: make test-mutation IN_DOCKER=
+        run: make test-mutation IN_DOCKER= THREADS="$(nproc)"

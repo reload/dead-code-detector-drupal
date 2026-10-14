@@ -43,9 +43,12 @@ test-coverage: vendor $(IMAGE_IF_USED) ## Measure test coverage of src (PHPUnit 
 # observes a mutant there and reports false escapes.
 MUTATE ?= $(shell find src -name '*.php' ! -name '*UsageProvider.php' ! -name '*Excluder.php' | sort)
 
+# Infection's max leaves a fifth of the cores free: one thread on a two-core CI runner, which passes THREADS=$(nproc).
+THREADS ?= max
+
 # Parallel: rule-test.neon turns off dead-code-detector's on-disk usage cache, where parallel runs collide.
-test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test all but providers and excluders (Infection, in Docker; MUTATE= limits it to files).
-	$(PHP_RUNNER) vendor/bin/infection --threads=max --show-mutations=max --log-verbosity=all --no-progress $(MUTATE)
+test-mutation: vendor $(IMAGE_IF_USED) ## Mutation-test all but providers and excluders (Infection, in Docker; MUTATE= limits it to files, THREADS= sets the threads).
+	$(PHP_RUNNER) vendor/bin/infection --threads=$(THREADS) --show-mutations=max --log-verbosity=all --no-progress $(MUTATE)
 
 format-php: vendor ## Format PHP code (PHPCBF).
 	vendor/bin/phpcbf
