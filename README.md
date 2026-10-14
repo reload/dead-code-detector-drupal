@@ -357,14 +357,17 @@ Changing a provider's code does not invalidate PHPStan's result cache, so run
 
 ## Releases
 
-On each push to `main`, semantic-release reads the new commits: a `fix`
-commit makes a patch release, a `feat` commit a minor release, a `!` after the
-type or a `BREAKING CHANGE` footer a major release, and other types none. A
-release creates a Git tag and a GitHub release and updates `CHANGELOG.md`;
-Packagist picks the tag up through its GitHub hook. Versions start below 1.0
-from the `v0.0.0` tag on the first commit. The release commit is pushed with
-the `GH_RELEASE_TOKEN` secret, a token with `Contents: Read and write` from an
-account on the bypass list of the ruleset on `main`.
+On each push to `main`, semantic-release reads the new commits:
+
+- A `fix` commit makes a patch release, a `feat` commit a minor release, a `!`
+  after the type or a `BREAKING CHANGE` footer a major release, and other
+  types none.
+- A release creates a Git tag and a GitHub release and updates
+  `CHANGELOG.md`; Packagist picks the tag up through its GitHub hook. Versions
+  start below 1.0 from the `v0.0.0` tag on the first commit.
+- The release commit is pushed with the `GH_RELEASE_TOKEN` secret, a token
+  with `Contents: Read and write` from an account on the bypass list of the
+  ruleset on `main`.
 
 ## License
 
