@@ -332,7 +332,7 @@ To see why a member counts as used, or does not, use dead-code-detector's
 the provider that marked it is printed with each usage.
 
 Changing a provider's code does not invalidate PHPStan's result cache, so run
-`phpstan clear-result-cache` after editing one.
+`vendor/bin/phpstan clear-result-cache` after editing one.
 
 ## Documentation
 

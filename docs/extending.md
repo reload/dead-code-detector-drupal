@@ -148,8 +148,8 @@ and the provider's note shows up on the usage when it fired.
 
 Changing the provider's code does not invalidate PHPStan's result cache:
 PHPStan tracks the analysed files and its configuration, not the classes its
-services are built from. Run `phpstan clear-result-cache` after editing a
-provider.
+services are built from. Run `vendor/bin/phpstan clear-result-cache` after
+editing a provider.
 
 ## When it belongs in this package
 
