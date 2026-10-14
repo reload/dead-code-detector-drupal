@@ -115,7 +115,7 @@ test calls, reports:
 - `#[Route]` on controllers (Drupal 11.4+): the constructor; dead-code-detector
   counts the routed methods
 - `*.permissions.yml` `permission_callbacks`
-- access checkers' `access()`
+- Access checkers' `access()`
 
 ### Hooks
 
@@ -127,10 +127,10 @@ test calls, reports:
 
 ### Plugins, entities and validation
 
-- plugin attribute properties, which `AttributeBase::get()` reads
-- config entity properties, written on load and read on save
+- Plugin attribute properties, which `AttributeBase::get()` reads
+- Config entity properties, written on load and read on save
 - `#[ActionMethod]` methods of config entities, which recipes call
-- constraint properties set from an options array
+- Constraint properties set from an options array
 - `*.schema.yml` `Callback` constraints
 
 ### Callbacks
@@ -138,29 +138,29 @@ test calls, reports:
 - `'::method'`, `'Class::method'`, `'Class:method'` and `'service:method'`,
   written out or built with `Foo::class . '::method'`, in form, render, Ajax
   and batch callbacks, `hook_theme()` and field definitions
-- the constructor too, when Drupal instantiates the class for the call
-- they count from where they appear, so a callback named only by dead code
+- The constructor too, when Drupal instantiates the class for the call
+- They count from where they appear, so a callback named only by dead code
   is dead too; array callables are dead-code-detector's own
 
 ### Twig templates
 
-- names that templates under the analysed paths access, limited to the
+- Names that templates under the analysed paths access, limited to the
   methods Drupal's Twig sandbox lets templates call, with the sandbox lists
   read from the site's settings files
-- see [Twig templates](docs/twig.md) for what this covers and misses
+- See [Twig templates](docs/twig.md) for what this covers and misses
 
 ### Calls by name
 
 - REST resources' HTTP methods: `get()`, `post()`, `patch()` and the rest
 - JSON:API resources' `process()`
 - GraphQL data producers' `resolve()`
-- exception subscribers' `on404()` and `on4xx()` handlers
+- Exception subscribers' `on404()` and `on4xx()` handlers
 
 ### Drush
 
-- commands with `#[CLI\Command]` or `@command`
-- hooks with `#[CLI\Hook]` or `@hook`
-- command class constructors, and `create()` factories
+- Commands with `#[CLI\Command]` or `@command`
+- Hooks with `#[CLI\Hook]` or `@hook`
+- Command class constructors, and `create()` factories
 - Drush 13's `#[AsCommand]` commands and `#[AsEventListener]` listeners,
   through dead-code-detector's Symfony support
 
