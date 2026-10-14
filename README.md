@@ -139,8 +139,10 @@ test calls, reports:
   written out or built with `Foo::class . '::method'`, in form, render, Ajax
   and batch callbacks, `hook_theme()` and field definitions
 - The constructor too, when Drupal instantiates the class for the call
-- They count from where they appear, so a callback named only by dead code
-  is dead too; array callables are dead-code-detector's own
+- A callback counts from where its string appears, so one named only by dead
+  code is dead too.
+- Array callables such as `[$this, 'method']` are handled by
+  dead-code-detector itself.
 
 ### Twig templates
 
