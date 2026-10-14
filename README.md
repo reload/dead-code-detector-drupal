@@ -284,8 +284,9 @@ when the mechanism belongs in this package instead.
 ### By design
 
 - Wiring is read statically: Drupal is not bootstrapped and no database is
-  needed. Wiring done in PHP, such as a service provider's `register()`, is
-  seen only where it names a method as a string callable.
+  needed ([why](docs/design.md#principles)). Wiring done in PHP, such as a
+  service provider's `register()`, is seen only where it names a method as a
+  string callable.
 - Templates are matched by name, so a coincidental name keeps a dead member
   alive, and a sandbox list computed at runtime is not seen. That costs about
   one hidden finding per site; see [Twig templates](docs/twig.md).
@@ -333,6 +334,8 @@ Changing a provider's code does not invalidate PHPStan's result cache, so run
 
 - [Coverage](docs/coverage.md): Drupal's documented mechanisms mapped to the
   providers, and what is not covered.
+- [Design](docs/design.md): why the code is structured, checked and tested as
+  it is, and what a new provider needs.
 - [Twig templates](docs/twig.md): how name matching works, what it misses,
   and the measurement behind keeping it.
 - [Writing a usage provider](docs/extending.md): for custom code, contrib
@@ -346,8 +349,7 @@ Changing a provider's code does not invalidate PHPStan's result cache, so run
 - `make checks` runs everything CI runs; `make help` lists the targets.
 - Commit messages follow [Conventional Commits][conventional-commits], which
   `make lint-commits` checks.
-- [AGENTS.md](AGENTS.md) has the architecture, the conventions and what a new
-  provider needs.
+- Start with the [design](docs/design.md) before changing the code.
 
 ## Releases
 
