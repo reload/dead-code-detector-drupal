@@ -16,6 +16,16 @@ rather than Drupal's wiring.
 
 ## Installation
 
+Requires:
+
+- Drupal 11.3 and later, PHP 8.3 and later.
+- Drupal 10 is not supported. Sites on `drupal/core-dev` cannot install it,
+  since core-dev pins PHPStan 1 there; others can, untested.
+- [phpstan-drupal][phpstan-drupal] comes with it and is required: without it,
+  PHPStan analyses no `.module`, `.theme`, `.install` or `.inc` files, so code
+  only procedural hooks call looks dead, and it cannot load core modules' and
+  contrib's classes, so overrides of their members look dead too.
+
 ```sh
 composer require --dev reload/dead-code-detector-drupal
 ```
@@ -30,14 +40,6 @@ includes:
     - vendor/shipmonk/dead-code-detector/rules.neon
     - vendor/reload/dead-code-detector-drupal/extension.neon
 ```
-
-- Drupal 11.3 and later, PHP 8.3 and later.
-- Drupal 10 is not supported. Sites on `drupal/core-dev` cannot install it,
-  since core-dev pins PHPStan 1 there; others can, untested.
-- [phpstan-drupal][phpstan-drupal] comes with it and is required: without it,
-  PHPStan analyses no `.module`, `.theme`, `.install` or `.inc` files, so code
-  only procedural hooks call looks dead, and it cannot load core modules' and
-  contrib's classes, so overrides of their members look dead too.
 
 > [!NOTE]
 > Analyse all your custom code: every custom module, theme and profile, tests
