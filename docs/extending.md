@@ -148,8 +148,8 @@ and the provider's note shows up on the usage when it fired.
 
 Changing the provider's code does not invalidate PHPStan's result cache:
 PHPStan tracks the analysed files and its configuration, not the classes its
-services are built from. Run `phpstan clear-result-cache` after editing a
-provider.
+services are built from. Run `vendor/bin/phpstan clear-result-cache` after
+editing a provider.
 
 ## When it belongs in this package
 
@@ -168,8 +168,7 @@ provider. Two kinds of mechanism cannot be done well from a site:
 - **Anything that depends on the analysed and excluded paths**, which only
   the package's discovery sees.
 
-[AGENTS.md](../AGENTS.md) lists what a provider in this package needs: a
-directory per mechanism, documentation references, a coverage row, and tests
-named after the cases they prove.
+[Adding a provider](design.md#adding-a-provider) lists what a provider in
+this package needs.
 
 [dcd-debugging]: https://github.com/shipmonk-rnd/dead-code-detector#debugging

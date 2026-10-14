@@ -17,6 +17,9 @@ use function sort;
  *
  * Usages read from YAML and Twig are cached with the PHP file they are
  * attached to, so without this an edited routing.yml leaves stale results.
+ * Each wiring file's path within the analysed tree counts too, as the tests
+ * excluder judges usages by it; paths within the tree, not absolute ones, let
+ * the cache survive the checkout moving.
  */
 final class DrupalFilesResultCacheMetaExtension implements ResultCacheMetaExtension
 {

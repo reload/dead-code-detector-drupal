@@ -1,8 +1,8 @@
 # Dead code detector for Drupal
 
-[shipmonk/dead-code-detector][dcd] extension that teaches it how Drupal calls
-code, so it reports dead class members in your custom modules, themes and
-profiles rather than Drupal's wiring.
+A [dead-code-detector][dcd] extension that teaches it how Drupal calls code,
+so it reports dead class members in your custom modules, themes and profiles
+rather than Drupal's wiring.
 
 ## Summary
 
@@ -15,6 +15,16 @@ profiles rather than Drupal's wiring.
 - ⚙️ **No configuration** beyond two switches
 
 ## Installation
+
+Requires:
+
+- Drupal 11.3 and later, PHP 8.3 and later.
+- Drupal 10 is not supported. Sites on `drupal/core-dev` cannot install it,
+  since core-dev pins PHPStan 1 there; others can, untested.
+- [phpstan-drupal][phpstan-drupal] comes with it and is required: without it,
+  PHPStan analyses no `.module`, `.theme`, `.install` or `.inc` files, so code
+  only procedural hooks call looks dead, and it cannot load core modules' and
+  contrib's classes, so overrides of their members look dead too.
 
 ```sh
 composer require --dev reload/dead-code-detector-drupal
@@ -30,14 +40,6 @@ includes:
     - vendor/shipmonk/dead-code-detector/rules.neon
     - vendor/reload/dead-code-detector-drupal/extension.neon
 ```
-
-- Drupal 11.3 and later, PHP 8.3 and later.
-- Drupal 10 is not supported. Sites on `drupal/core-dev` cannot install it,
-  since core-dev pins PHPStan 1 there; others can, untested.
-- [phpstan-drupal][phpstan-drupal] comes with it and is required: without it,
-  PHPStan analyses no `.module`, `.theme`, `.install` or `.inc` files, so code
-  only procedural hooks call looks dead, and it cannot load core modules' and
-  contrib's classes, so overrides of their members look dead too.
 
 > [!NOTE]
 > Analyse all your custom code: every custom module, theme and profile, tests
@@ -113,7 +115,7 @@ test calls, reports:
 - `#[Route]` on controllers (Drupal 11.4+): the constructor; dead-code-detector
   counts the routed methods
 - `*.permissions.yml` `permission_callbacks`
-- access checkers' `access()`
+- Access checkers' `access()`
 
 ### Hooks
 
@@ -125,10 +127,10 @@ test calls, reports:
 
 ### Plugins, entities and validation
 
-- plugin attribute properties, which `AttributeBase::get()` reads
-- config entity properties, written on load and read on save
+- Plugin attribute properties, which `AttributeBase::get()` reads
+- Config entity properties, written on load and read on save
 - `#[ActionMethod]` methods of config entities, which recipes call
-- constraint properties set from an options array
+- Constraint properties set from an options array
 - `*.schema.yml` `Callback` constraints
 
 ### Callbacks
@@ -136,29 +138,31 @@ test calls, reports:
 - `'::method'`, `'Class::method'`, `'Class:method'` and `'service:method'`,
   written out or built with `Foo::class . '::method'`, in form, render, Ajax
   and batch callbacks, `hook_theme()` and field definitions
-- the constructor too, when Drupal instantiates the class for the call
-- they count from where they appear, so a callback named only by dead code
-  is dead too; array callables are dead-code-detector's own
+- The constructor too, when Drupal instantiates the class for the call
+- A callback counts from where its string appears, so one named only by dead
+  code is dead too.
+- Array callables such as `[$this, 'method']` are handled by
+  dead-code-detector itself.
 
 ### Twig templates
 
-- names that templates under the analysed paths access, limited to the
+- Names that templates under the analysed paths access, limited to the
   methods Drupal's Twig sandbox lets templates call, with the sandbox lists
   read from the site's settings files
-- see [Twig templates](docs/twig.md) for what this covers and misses
+- See [Twig templates](docs/twig.md) for what this covers and misses
 
 ### Calls by name
 
 - REST resources' HTTP methods: `get()`, `post()`, `patch()` and the rest
 - JSON:API resources' `process()`
 - GraphQL data producers' `resolve()`
-- exception subscribers' `on404()` and `on4xx()` handlers
+- Exception subscribers' `on404()` and `on4xx()` handlers
 
 ### Drush
 
-- commands with `#[CLI\Command]` or `@command`
-- hooks with `#[CLI\Hook]` or `@hook`
-- command class constructors, and `create()` factories
+- Commands with `#[CLI\Command]` or `@command`
+- Hooks with `#[CLI\Hook]` or `@hook`
+- Command class constructors, and `create()` factories
 - Drush 13's `#[AsCommand]` commands and `#[AsEventListener]` listeners,
   through dead-code-detector's Symfony support
 
@@ -284,8 +288,9 @@ when the mechanism belongs in this package instead.
 ### By design
 
 - Wiring is read statically: Drupal is not bootstrapped and no database is
-  needed. Wiring done in PHP, such as a service provider's `register()`, is
-  seen only where it names a method as a string callable.
+  needed ([why](docs/design.md#principles)). Wiring done in PHP, such as a
+  service provider's `register()`, is seen only where it names a method as a
+  string callable.
 - Templates are matched by name, so a coincidental name keeps a dead member
   alive, and a sandbox list computed at runtime is not seen. That costs about
   one hidden finding per site; see [Twig templates](docs/twig.md).
@@ -327,12 +332,14 @@ To see why a member counts as used, or does not, use dead-code-detector's
 the provider that marked it is printed with each usage.
 
 Changing a provider's code does not invalidate PHPStan's result cache, so run
-`phpstan clear-result-cache` after editing one.
+`vendor/bin/phpstan clear-result-cache` after editing one.
 
 ## Documentation
 
 - [Coverage](docs/coverage.md): Drupal's documented mechanisms mapped to the
   providers, and what is not covered.
+- [Design](docs/design.md): why the code is structured, checked and tested as
+  it is, and what a new provider needs.
 - [Twig templates](docs/twig.md): how name matching works, what it misses,
   and the measurement behind keeping it.
 - [Writing a usage provider](docs/extending.md): for custom code, contrib
@@ -346,19 +353,21 @@ Changing a provider's code does not invalidate PHPStan's result cache, so run
 - `make checks` runs everything CI runs; `make help` lists the targets.
 - Commit messages follow [Conventional Commits][conventional-commits], which
   `make lint-commits` checks.
-- [AGENTS.md](AGENTS.md) has the architecture, the conventions and what a new
-  provider needs.
+- Start with the [design](docs/design.md) before changing the code.
 
 ## Releases
 
-On each push to `main`, semantic-release reads the new commits: a `fix`
-commit makes a patch release, a `feat` commit a minor release, a `!` after the
-type or a `BREAKING CHANGE` footer a major release, and other types none. A
-release creates a Git tag and a GitHub release and updates `CHANGELOG.md`;
-Packagist picks the tag up through its GitHub hook. Versions start below 1.0
-from the `v0.0.0` tag on the first commit. The release commit is pushed with
-the `GH_RELEASE_TOKEN` secret, a token with `Contents: Read and write` from an
-account on the bypass list of the ruleset on `main`.
+On each push to `main`, semantic-release reads the new commits:
+
+- A `fix` commit makes a patch release, a `feat` commit a minor release, a `!`
+  after the type or a `BREAKING CHANGE` footer a major release, and other
+  types none.
+- A release creates a Git tag and a GitHub release and updates
+  `CHANGELOG.md`; Packagist picks the tag up through its GitHub hook. Versions
+  start below 1.0 from the `v0.0.0` tag on the first commit.
+- The release commit is pushed with the `GH_RELEASE_TOKEN` secret, a token
+  with `Contents: Read and write` from an account on the bypass list of the
+  ruleset on `main`.
 
 ## License
 

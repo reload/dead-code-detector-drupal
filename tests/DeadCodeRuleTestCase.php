@@ -33,11 +33,16 @@ use function substr;
  * package's extension.neon over fixtures, and checks one fixture member per
  * test.
  *
- * Shipmonk's rule keeps state between analyses, so every test class with the
- * same config files shares one container and one analysis of all their
- * fixtures. Each class then keeps the messages about its own fixtures, which
- * live in Drupal\example\<Mechanism>, named after the test's directory. A
- * class alone with its config files keeps every message.
+ * dead-code-detector's rule keeps state between analyses, so every test class
+ * with the same config files shares one container and one analysis of all
+ * their fixtures. Each class then keeps the messages about its own fixtures,
+ * which live in Drupal\example\<Mechanism>, named after the test's directory.
+ * A class alone with its config files keeps every message.
+ *
+ * A container per test class took more code to keep the containers apart
+ * than the tests had: helper classes, a neon file per test and fixture lists
+ * kept by hand. The group is whichever classes PHPUnit has loaded, so running
+ * one test file analyses only its own fixtures.
  *
  * @extends RuleTestCase<DeadCodeRule>
  */

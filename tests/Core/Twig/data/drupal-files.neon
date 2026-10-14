@@ -1,3 +1,6 @@
+# Twig's rule tests keep a container of their own: templates match members by
+# bare name, so in the shared analysis a template here could keep another
+# mechanism's fixture member alive.
 services:
     drupalDeadCode.drupalFiles:
         factory: Reload\DeadCodeDetectorDrupal\Support\Discovery\DrupalFiles(['%rootDir%/../../../tests/Core/Twig/data/templates'], Reload\DeadCodeDetectorDrupal\Support\Discovery\ExcludedPaths::fromParameter([]))

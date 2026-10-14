@@ -23,6 +23,11 @@ use const ARRAY_FILTER_USE_KEY;
  *
  * Custom code keeps its wiring next to its PHP, so the analysed paths are
  * exactly where to look.
+ *
+ * Found here rather than through phpstan-drupal's ExtensionMap, which ignores
+ * the analysed and excluded paths. The map is also static state, filled at
+ * bootstrap and due to change; not building on it keeps an upstream move
+ * possible.
  */
 final class DrupalFiles
 {
