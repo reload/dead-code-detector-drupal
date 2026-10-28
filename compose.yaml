@@ -8,7 +8,7 @@ services:
       - .:/app
     working_dir: /app
   markdownlint:
-    image: davidanson/markdownlint-cli2:v0.23.3
+    image: davidanson/markdownlint-cli2:v0.24.0
     volumes:
       - .:/workdir
     working_dir: /workdir
